@@ -106,14 +106,14 @@ func printGrid(laser [][]bool) {
 	}
 }
 
-func part1(grid []string) int {
+func solve(grid []string, start direction) int {
 	laser := make([][]bool, len(grid))
 	for i := range laser {
 		laser[i] = make([]bool, len(grid[0]))
 	}
 	var directionEncountered []direction = make([]direction, 0, 1)
 	var directionToBrowse []direction = make([]direction, 1, 1)
-	directionToBrowse[0] = createDirection(0, 0, 1)
+	directionToBrowse[0] = start
 	for len(directionToBrowse) != 0 {
 		if !isPresent(directionEncountered, directionToBrowse[0]) {
 			var sens int = directionToBrowse[0][2]
@@ -189,6 +189,10 @@ func part1(grid []string) int {
 	}
 	return countTrue(laser)
 
+}
+
+func part1(lines []string) int {
+	return solve(lines, createDirection(0, 0, 1))
 }
 
 func main() {
