@@ -195,8 +195,31 @@ func part1(lines []string) int {
 	return solve(lines, createDirection(0, 0, 1))
 }
 
+func part2(lines []string) int {
+	var listStart []direction = make([]direction, 0)
+	var nbColumns int = len(lines[0])
+	var nbLines int = len(lines)
+	for i := range nbLines {
+		listStart = append(listStart, createDirection(i, 0, 1))
+		listStart = append(listStart, createDirection(i, nbColumns-1, 0))
+	}
+	for j := range nbColumns {
+		listStart = append(listStart, createDirection(0, j, 3))
+		listStart = append(listStart, createDirection(nbLines-1, j, 2))
+	}
+	var res int
+	for _, dir := range listStart {
+		var resSolve int = solve(lines, dir)
+		if resSolve > res {
+			res = resSolve
+		}
+	}
+	return res
+}
+
 func main() {
 	var input = strings.TrimSuffix(inputDay, "\n")
 	var lines = strings.Split(input, "\n")
 	fmt.Println(part1(lines))
+	fmt.Println(part2(lines))
 }
