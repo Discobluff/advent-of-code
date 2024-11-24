@@ -20,7 +20,7 @@ func isPresent(list []int, elem int) bool {
 }
 
 func intersect(list1 []int, list2 []int) []int {
-	var res []int = make([]int, 0)
+	var res []int
 	for _, elem1 := range list1 {
 		if isPresent(list2, elem1) {
 			res = append(res, elem1)
@@ -38,7 +38,7 @@ func convertStringToInt(str string) int {
 }
 
 func recomposeHand(hand []string) []int {
-	var res []int = make([]int, 0)
+	var res []int
 	for _, number := range hand {
 		if number != "" {
 			res = append(res, convertStringToInt(number))
@@ -57,8 +57,8 @@ func parseLine(line string) ([]int, []int) {
 }
 
 func parse(lines []string) ([][]int, [][]int) {
-	var res1 [][]int = make([][]int, 0)
-	var res2 [][]int = make([][]int, 0)
+	var res1 [][]int
+	var res2 [][]int
 	for _, line := range lines {
 		tab1, tab2 := parseLine(line)
 		res1 = append(res1, tab1)
@@ -71,6 +71,14 @@ func score(tab []int) int {
 	return int(math.Pow(2., float64(len(tab)-1)))
 }
 
+func sumSlice(tab []int) int {
+	var sum int
+	for _, elem := range tab {
+		sum += elem
+	}
+	return sum
+}
+
 func part1(lines []string) int {
 	tab1, tab2 := parse(lines)
 	var sum int
@@ -80,8 +88,24 @@ func part1(lines []string) int {
 	return sum
 }
 
+func part2(lines []string) int {
+	var compte []int = make([]int, len(lines), len(lines))
+	tab1, tab2 := parse(lines)
+	for i := range len(lines) {
+		compte[i] = 1
+	}
+	for i := range len(lines) {
+		var nbSame int = len(intersect(tab1[i], tab2[i]))
+		for j := i + 1; j <= i+nbSame; j++ {
+			compte[j] += compte[i]
+		}
+	}
+	return sumSlice(compte)
+}
+
 func main() {
 	var input = strings.TrimSuffix(inputDay, "\n")
 	var lines = strings.Split(input, "\n")
 	fmt.Println(part1(lines))
+	fmt.Println(part2(lines))
 }
