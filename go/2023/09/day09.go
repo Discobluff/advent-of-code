@@ -25,7 +25,9 @@ func convertStringToInt(str string) int {
 func convertStringToSliceInt(str []string) []int {
 	var res []int = make([]int, len(str), len(str))
 	for i, chain := range str {
-		res[i] = convertStringToInt(chain)
+		if chain != "" {
+			res[i] = convertStringToInt(chain)
+		}
 	}
 	return res
 }
@@ -47,17 +49,33 @@ func buildNextTab(tab []int) []int {
 	return res
 }
 
-func solve(numbers []int) int {
+func solve1(numbers []int) int {
 	if isZero(numbers) {
 		return 0
 	}
-	return numbers[len(numbers)-1] + solve(buildNextTab(numbers))
+	return numbers[len(numbers)-1] + solve1(buildNextTab(numbers))
+}
+
+func solve2(numbers []int) int {
+	if isZero(numbers) {
+		return 0
+	}
+	var val = solve2(buildNextTab(numbers))
+	return numbers[0] - val
 }
 
 func part1(lines []string) int {
 	var res int
 	for _, line := range lines {
-		res += solve(convertStringToSliceInt(strings.Split(line, " ")))
+		res += solve1(convertStringToSliceInt(strings.Split(line, " ")))
+	}
+	return res
+}
+
+func part2(lines []string) int {
+	var res int
+	for _, line := range lines {
+		res += solve2(convertStringToSliceInt(strings.Split(line, " ")))
 	}
 	return res
 }
@@ -66,4 +84,5 @@ func main() {
 	var input = strings.TrimSuffix(inputDay, "\n")
 	var lines = strings.Split(input, "\n")
 	fmt.Println(part1(lines))
+	fmt.Println(part2(lines))
 }
