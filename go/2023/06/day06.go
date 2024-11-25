@@ -51,8 +51,15 @@ func part1(lines []string) int {
 	return product
 }
 
+func part2(lines []string) int {
+	var time int = convertStringToInt(strings.ReplaceAll(strings.Split(lines[0], ":")[1], " ", ""))
+	var distance int = convertStringToInt(strings.ReplaceAll(strings.Split(lines[1], ":")[1], " ", ""))
+	return getCountGreaterDistance(time, distance)
+}
+
 func main() {
 	var input = strings.TrimSuffix(inputDay, "\n")
 	var lines = strings.Split(input, "\n")
 	fmt.Println(part1(lines))
+	fmt.Println(part2(lines))
 }
