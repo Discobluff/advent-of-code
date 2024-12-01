@@ -12,19 +12,42 @@ import (
 //go:embed input.txt
 var input string
 
-func minSlice(numbers []int, ignoredIndex []bool) (int, int) {
-	var res int = -1
-	var index int = -1
-	for i, val := range numbers {
-		if !ignoredIndex[i] {
-			if res == -1 || val < res {
-				res = val
-				index = i
+func mergeTab(tab1 []int, tab2 []int) []int {
+	var res []int = make([]int, len(tab1)+len(tab2))
+	var i int
+	var j int
+	for i+j < len(tab1)+len(tab2) {
+		if i >= len(tab1) {
+			res[i+j] = tab2[j]
+			j++
+		} else {
+			if j >= len(tab2) {
+				res[i+j] = tab1[i]
+				i++
+			} else {
+				if tab1[i] <= tab2[j] {
+					res[i+j] = tab1[i]
+					i++
+				} else {
+					res[i+j] = tab2[j]
+					j++
+				}
 			}
 		}
 	}
-	return res, index
+	return res
+}
 
+func splitTab(numbers []int) ([]int, []int) {
+	return numbers[:len(numbers)/2], numbers[len(numbers)/2:]
+}
+
+func sortTab(numbers []int) []int {
+	if len(numbers) < 2 {
+		return numbers
+	}
+	var s1, s2 []int = splitTab(numbers)
+	return mergeTab(sortTab(s1), sortTab(s2))
 }
 
 func parse(lines []string) ([]int, []int) {
@@ -48,15 +71,11 @@ func occurrence(numbers []int) map[int]int {
 
 func part1(lines []string) int {
 	var s1, s2 []int = parse(lines)
-	var ignoredIndex1 []bool = make([]bool, len(s1))
-	var ignoredIndex2 []bool = make([]bool, len(s1))
+	s1 = sortTab(s1)
+	s2 = sortTab(s2)
 	var res int
-	for range s1 {
-		var min1, i1 = minSlice(s1, ignoredIndex1)
-		var min2, i2 = minSlice(s2, ignoredIndex2)
-		ignoredIndex1[i1] = true
-		ignoredIndex2[i2] = true
-		res += int(math.Abs(float64(min1 - min2)))
+	for i := range s1 {
+		res += int(math.Abs(float64(s1[i] - s2[i])))
 	}
 	return res
 }
@@ -74,7 +93,7 @@ func part2(lines []string) int {
 func main() {
 	var input = strings.TrimSuffix(input, "\n")
 	var lines = strings.Split(input, "\n")
-	fmt.Println("--2024 day 1 solution--")
+	fmt.Println("--2024 day 01 solution--")
 	start := time.Now()
 	fmt.Println("part1 : ", part1(lines))
 	fmt.Println(time.Since(start))
