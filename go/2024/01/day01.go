@@ -38,12 +38,10 @@ func parse(lines []string) ([]int, []int) {
 	return s1, s2
 }
 
-func occurrence(numbers []int, number int) int {
-	var res int
-	for _, val := range numbers {
-		if val == number {
-			res += 1
-		}
+func occurrence(numbers []int) map[int]int {
+	var res map[int]int = make(map[int]int)
+	for _, number := range numbers {
+		res[number]++
 	}
 	return res
 }
@@ -66,8 +64,9 @@ func part1(lines []string) int {
 func part2(lines []string) int {
 	var s1, s2 []int = parse(lines)
 	var res int
+	var occurrences map[int]int = occurrence(s2)
 	for _, val := range s1 {
-		res += val * occurrence(s2, val)
+		res += val * occurrences[val]
 	}
 	return res
 }
