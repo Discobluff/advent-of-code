@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-//go:embed input.txt
+// //go:embed input.txt
 var inputDay string
 
 func TestPart1Input(t *testing.T) {

@@ -50,7 +50,6 @@ func isSafe(numbers []int, ignore int) bool {
 	}
 	return true
 }
-
 func isSafe2(numbers []int) bool {
 	for i := -1; i < len(numbers); i++ {
 		if isSafe(numbers, i) {
@@ -58,6 +57,14 @@ func isSafe2(numbers []int) bool {
 		}
 	}
 	return false
+}
+
+func differences(numbers []int) []int {
+	var res []int = make([]int, len(numbers)-1)
+	for i := range len(numbers) - 1 {
+		res[i] = res[i+1] - res[i]
+	}
+	return res
 }
 
 func part1(lines []string) int {
@@ -83,11 +90,12 @@ func part2(lines []string) int {
 func main() {
 	var input = strings.TrimSuffix(input, "\n")
 	var lines = strings.Split(input, "\n")
-	fmt.Println("--2024 day 01 solution--")
+	fmt.Println("--2024 day 02 solution--")
 	start := time.Now()
 	fmt.Println("part1 : ", part1(lines))
 	fmt.Println(time.Since(start))
 	start = time.Now()
 	fmt.Println("part2 : ", part2(lines))
 	fmt.Println(time.Since(start))
+
 }

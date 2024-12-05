@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# Template files
+templates/
+
+# Create folder for new day
+createDay.go
+createDay
