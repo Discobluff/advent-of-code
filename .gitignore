@@ -30,3 +30,6 @@ templates/
 # Create folder for new day
 createDay.go
 createDay
+
+#Inputs files
+input.txt
