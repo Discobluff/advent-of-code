@@ -62,30 +62,29 @@ func initGrid(height int, length int) [][]Case {
 	return res
 }
 
-func solve(lines []string) (int, bool) {
-	var grid = initGrid(len(lines), len(lines[0]))
-	var direction int = 1
-	var x, y = searchStart(lines, '^')
-	var res int
-	var leaveGrid bool
-	var loop bool
-	for !leaveGrid && !loop {
-		if !grid[x][y].visited {
-			res++
-		}
-		grid[x][y].visited = true
-		grid[x][y].direction = append(grid[x][y].direction, direction)
-		direction, x, y, leaveGrid = nextCase(lines, direction, x, y)
-		if !leaveGrid {
-			loop = slices.Contains(grid[x][y].direction, direction)
-		}
+func solve(lines []string, grid [][]Case, direction int, x int, y int, res int) (int, bool) {
+	if slices.Contains(grid[x][y].direction, direction) {
+		return res, true
 	}
-	return res, loop
+	var leaveGrid bool
+	var newRes int = res
+	if !grid[x][y].visited {
+		newRes = res + 1
+	}
+	grid[x][y].visited = true
+	grid[x][y].direction = append(grid[x][y].direction, direction)
+	direction, x, y, leaveGrid = nextCase(lines, direction, x, y)
+	if leaveGrid {
+		return newRes, false
+	}
+	return solve(lines, grid, direction, x, y, newRes)
 }
 
 func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	var res, _ = solve(lines)
+	var grid = initGrid(len(lines), len(lines[0]))
+	var x, y = searchStart(lines, '^')
+	var res, _ = solve(lines, grid, 1, x, y, 0)
 	return res
 }
 
@@ -101,36 +100,43 @@ func muteString(str string, index int, char byte) string {
 	return string(res)
 }
 
-// func cop(lines []string) []string {
-
-// }
-
 func part2(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	var grid = initGrid(len(lines), len(lines[0]))
 	var x, y = searchStart(lines, '^')
+	var dirS = 1
+	var xS, yS = searchStart(lines, '^')
 	var res int
-	// var cop []string = copys(lines)
-
-	// fmt.Println("non")
-	// fmt.Println("bart", slices.Equal(lines, cop))
-	for i := range lines {
-		for j := range lines[i] {
-			if x != i || y != j {
-				var char = lines[i][j]
-				if char != '#' {
-					lines[i] = muteString(lines[i], j, '#')
-					var _, ok = solve(lines)
-					if ok {
-						res++
-					}
-					lines[i] = muteString(lines[i], j, char)
-					// if !slices.Equal(lines, cop) {
-					// 	fmt.Println("alerte")
-					// }
-					// fmt.Println(slices.Equal(lines, cop))
-				}
-			}
+	var leaveGrid bool
+	var loop bool
+	var direction int = 1
+	var nextX int
+	var nextY int
+	var nextDir int
+	var parcourus [][2]int
+	for !leaveGrid && !loop {
+		if slices.Contains(grid[x][y].direction, direction) {
+			return res
 		}
+		grid[x][y].visited = true
+		grid[x][y].direction = append(grid[x][y].direction, direction)
+		nextDir, nextX, nextY, leaveGrid = nextCase(lines, direction, x, y)
+		if leaveGrid {
+			return res
+		}
+		if lines[nextX][nextY] != '#' && !slices.Contains(parcourus, [2]int{nextX, nextY}) {
+			parcourus = append(parcourus, [2]int{nextX, nextY})
+			var line = lines[nextX]
+			lines[nextX] = muteString(lines[nextX], nextY, '#')
+			var _, ok = solve(lines, initGrid(len(lines), len(lines[0])), dirS, xS, yS, 0)
+			if ok {
+				res++
+			}
+			lines[nextX] = line
+		}
+		direction = nextDir
+		x = nextX
+		y = nextY
 	}
 	return res
 }
