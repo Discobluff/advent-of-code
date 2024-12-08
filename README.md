@@ -21,4 +21,4 @@ Mostly written in Go
 | **15** | |
 | **16** | [Go](./go/2023/16/day16.go) |
 
-Day with 🧪 are provided with tests.
+Days with 🧪 are provided with tests.
