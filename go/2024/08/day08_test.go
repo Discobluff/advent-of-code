@@ -2,10 +2,11 @@ package main
 
 import (
 	_ "embed"
+	"slices"
 	"testing"
 )
 
-// //go:embed input.txt
+//go:embed input.txt
 var inputDay string
 
 func TestPart1Input(t *testing.T) {
@@ -44,8 +45,40 @@ func TestIsValide(t *testing.T) {
 }
 
 func TestAntinode(t *testing.T) {
-	var pos1, pos2 = antinode1(initPosition(3, 4), initPosition(5, 5))
-	if pos1.line != 1 || pos1.column != 3 || pos2.line != 7 || pos2.column != 6 {
-		t.Errorf("Result is incorrect, got: %d,%d|%d,%d, want: %d,%d|%d,%d.", pos1.line, pos1.column, pos2.line, pos2.column, 1, 3, 7, 6)
+	var pos [][2]Position = [][2]Position{{initPosition(3, 4), initPosition(5, 5)}, {initPosition(2, 1), initPosition(9, 15)}, {initPosition(0, 0), initPosition(1, 3)}}
+	var distances []int = []int{2, 0, 3}
+	var expected [][2]Position = [][2]Position{{initPosition(1, 3), initPosition(7, 6)}, {initPosition(9, 15), initPosition(2, 1)}, {initPosition(-2, -6), initPosition(3, 9)}}
+	for i, positions := range pos {
+		var res1, res2 = antinode(positions[0], positions[1], distances[i])
+		if res1.line != expected[i][0].line || res1.column != expected[i][0].column || res2.line != expected[i][1].line || res2.column != expected[i][1].column {
+			t.Errorf("Result is incorrect, got: %d,%d|%d,%d, want: %d,%d|%d,%d.", res1.line, res1.column, res2.line, res2.column, expected[i][0].line, expected[i][0].column, expected[i][1].line, expected[i][1].column)
+		}
+	}
+}
+
+func TestInitMap(t *testing.T) {
+	var dict = initMap([]string{"..4.", ".4.a", "a.A.", "...A"})
+	if !slices.Equal(dict['4'], []Position{initPosition(0, 2), initPosition(1, 1)}) {
+		t.Errorf("Result is incorrect for char: %c, got: %v, want: %v", '4', dict['4'], []Position{initPosition(0, 2), initPosition(1, 1)})
+	}
+	if !slices.Equal(dict['a'], []Position{initPosition(1, 3), initPosition(2, 0)}) {
+		t.Errorf("Result is incorrect for char: %c, got: %v, want: %v", '4', dict['a'], []Position{initPosition(0, 2), initPosition(1, 1)})
+	}
+	if !slices.Equal(dict['A'], []Position{initPosition(2, 2), initPosition(3, 3)}) {
+		t.Errorf("Result is incorrect for char: %c, got: %v, want: %v", '4', dict['A'], []Position{initPosition(0, 2), initPosition(1, 1)})
+	}
+}
+
+func TestInitGrid(t *testing.T) {
+	var grid = initGrid(2, 3)
+	if len(grid) != 3 || len(grid[0]) != 2 {
+		t.Errorf("Result is incorrect for size, got: %d,%d, want: %d,%d", len(grid), len(grid[0]), 3, 2)
+	}
+	for i := range 3 {
+		for j := range 2 {
+			if grid[i][j] {
+				t.Errorf("Result is incorrect for grid at %d,%d", i, j)
+			}
+		}
 	}
 }

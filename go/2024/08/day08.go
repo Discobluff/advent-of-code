@@ -42,43 +42,31 @@ func initGrid(length int, height int) [][]bool {
 	return res
 }
 
-func antinode1(pos1 Position, pos2 Position) (Position, Position) {
-	return initPosition(2*pos1.line-pos2.line, 2*pos1.column-pos2.column), initPosition(2*pos2.line-pos1.line, 2*pos2.column-pos1.column)
+func antinode(pos1 Position, pos2 Position, distance int) (Position, Position) {
+	return initPosition(distance*pos1.line-(distance-1)*pos2.line, distance*pos1.column-(distance-1)*pos2.column), initPosition(distance*pos2.line-(distance-1)*pos1.line, distance*pos2.column-(distance-1)*pos1.column)
 }
 
-func antinode2(pos1 Position, pos2 Position, length int, height int) []Position {
-	var res []Position //= make([]Position, 0)
-	var i = 1
-	var pos = initPosition(i*pos1.line-(i-1)*pos2.line, i*pos1.column-(i-1)*pos2.column)
-	for isValid(pos, height, length) {
-		res = append(res, pos)
+func antinode2(pos1 Position, pos2 Position, length int, height int, grid *[][]bool) int {
+	var i int = 1
+	var res int
+	var position1, position2 = initPosition(i*pos1.line-(i-1)*pos2.line, i*pos1.column-(i-1)*pos2.column), initPosition(i*pos2.line-(i-1)*pos1.line, i*pos2.column-(i-1)*pos1.column)
+	for isValid(position1, height, length) || isValid(position2, height, length) {
+		if isValid(position1, height, length) && !(*grid)[position1.line][position1.column] {
+			(*grid)[position1.line][position1.column] = true
+			res++
+		}
+		if isValid(position2, height, length) && !(*grid)[position2.line][position2.column] {
+			(*grid)[position2.line][position2.column] = true
+			res++
+		}
 		i += 1
-		pos = initPosition(i*pos1.line-(i-1)*pos2.line, i*pos1.column-(i-1)*pos2.column)
-	}
-	i = 1
-	pos = initPosition(i*pos2.line-(i-1)*pos1.line, i*pos2.column-(i-1)*pos1.column)
-	for isValid(pos, height, length) {
-		res = append(res, pos)
-		i += 1
-		pos = initPosition(i*pos2.line-(i-1)*pos1.line, i*pos2.column-(i-1)*pos1.column)
+		position1, position2 = antinode(pos1, pos2, i)
 	}
 	return res
 }
 
 func isValid(pos Position, height int, length int) bool {
 	return pos.line < height && pos.line >= 0 && pos.column < length && pos.column >= 0
-}
-
-func countTrue(grid [][]bool) int {
-	var res int
-	for _, line := range grid {
-		for _, val := range line {
-			if val {
-				res++
-			}
-		}
-	}
-	return res
 }
 
 func part1(input string) int {
@@ -91,7 +79,7 @@ func part1(input string) int {
 	for _, positions := range dict {
 		for i := range positions {
 			for j := i + 1; j < len(positions); j++ {
-				var pos1, pos2 = antinode1(positions[i], positions[j])
+				var pos1, pos2 = antinode(positions[i], positions[j], 2)
 				if isValid(pos1, height, length) && !grid[pos1.line][pos1.column] {
 					grid[pos1.line][pos1.column] = true
 					res++
@@ -116,13 +104,7 @@ func part2(input string) int {
 	for _, positions := range dict {
 		for i := range positions {
 			for j := i + 1; j < len(positions); j++ {
-				var slice = antinode2(positions[i], positions[j], length, height)
-				for _, pos := range slice {
-					if isValid(pos, height, length) && !grid[pos.line][pos.column] {
-						grid[pos.line][pos.column] = true
-						res++
-					}
-				}
+				res += antinode2(positions[i], positions[j], length, height, &grid)
 			}
 		}
 	}
