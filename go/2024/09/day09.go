@@ -12,20 +12,7 @@ import (
 var input string
 
 type Block struct {
-<<<<<<< HEAD
 	id, start, length int
-=======
-	start, length int
-}
-
-func sum(line string) int {
-	var res int
-	for i := range line {
-		temp, _ := strconv.Atoi(string(line[i]))
-		res += temp
-	}
-	return res
->>>>>>> 7950057701174c99d95483d936cf6dfb379b0376
 }
 
 func initTab(line string) []int {
@@ -45,7 +32,6 @@ func initTab(line string) []int {
 	return res
 }
 
-<<<<<<< HEAD
 func createBlock(id int, start int, length int) Block {
 	var res Block
 	res.id = id
@@ -67,14 +53,6 @@ func parse(line string) []Block {
 		}
 		isPoint = !isPoint
 		shift += intVal
-=======
-func checkSum(slice []int) int {
-	var res int
-	for i, val := range slice {
-		if val != -1 {
-			res += i * val
-		}
->>>>>>> 7950057701174c99d95483d936cf6dfb379b0376
 	}
 	return res
 }
@@ -93,10 +71,6 @@ func solve1(line string) int {
 			end--
 		}
 		if start < end {
-<<<<<<< HEAD
-=======
-
->>>>>>> 7950057701174c99d95483d936cf6dfb379b0376
 			tab[start] = tab[end]
 			tab[end] = -1
 		}
@@ -104,7 +78,6 @@ func solve1(line string) int {
 	return res
 }
 
-<<<<<<< HEAD
 // Insert value which is at index i at index j
 func insert(tab *[]Block, i int, j int) {
 	var temp Block = (*tab)[i]
@@ -143,65 +116,6 @@ func solve2(line string) int {
 		index = search(tab, id)
 	}
 	return res
-=======
-func maxTab(slice []int) (int, int, int) {
-	var res int = -1
-	var deb int = -1
-	var fin int = -1
-	for i, val := range slice {
-		if res == val {
-			fin = i
-		}
-		if res == -1 || res < val {
-			res = val
-			deb = i
-			fin = i
-		}
-	}
-	return res, deb, fin
-}
-
-func rangeSlice(slice []int, val int) (int, int) {
-	var start int = -1
-	var end int
-	for i, v := range slice {
-		if start == -1 && v == val {
-			start = i
-		}
-		if v == val {
-			end = i
-		}
-	}
-	return start, end
-}
-
-func isEmpty(slice []int) bool {
-	for _, val := range slice {
-		if val != -1 {
-			return false
-		}
-	}
-	return true
-}
-
-func solve2(line string) int {
-	var tab []int = initTab(line)
-	var index, start, end int = maxTab(tab)
-	for index > 0 {
-		for i := range start {
-			if isEmpty(tab[i : i+end-start+1]) {
-				for j := i; j < i+end-start+1; j++ {
-					tab[j] = tab[start+j-i]
-					tab[start+j-i] = -1
-				}
-				break
-			}
-		}
-		index--
-		start, end = rangeSlice(tab, index)
-	}
-	return checkSum(tab)
->>>>>>> 7950057701174c99d95483d936cf6dfb379b0376
 }
 
 func part1(input string) int {
