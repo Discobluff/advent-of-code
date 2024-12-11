@@ -8,14 +8,15 @@ import (
 	"time"
 )
 
-//go:embed test.txt
+//go:embed input.txt
 var input string
 
-func parse(line string) []int {
+func parse(line string) map[int]int {
 	var numbers []string = strings.Split(line, " ")
-	var res []int = make([]int, len(numbers))
-	for i, number := range numbers {
-		res[i], _ = strconv.Atoi(number)
+	var res map[int]int = make(map[int]int)
+	for _, number := range numbers {
+		var num, _ = strconv.Atoi(number)
+		res[num] += 1
 	}
 	return res
 }
@@ -45,49 +46,41 @@ func split(number int, nbDigits int) (int, int) {
 
 }
 
-func blinkNumber(number int, times int) int {
-	// fmt.Println(number, times)
-	if times == 0 {
-		return 1
+func blink(val int) (int, int, bool) {
+	if val == 0 {
+		return 1, 0, false
 	}
-	if number == 0 {
-		return blinkNumber(1, times-1)
-	}
-	var digits, ok = countDigits(number)
+	var nbDigits, ok = countDigits(val)
 	if ok {
-		var n1, n2 int = split(number, digits)
-		return blinkNumber(n1, times-1) + blinkNumber(n2, times-1)
+		var n1, n2 = split(val, nbDigits)
+		return n1, n2, true
 	}
-	return blinkNumber(number*2024, times-1)
+	return val * 2024, 0, false
 }
 
-// func blink(numbers []int) []int {
-// 	var res []int
-// 	for _, val := range numbers {
-// 		if val == 0 {
-// 			res = append(res, 1)
-// 		} else {
-// 			var nbDigits, ok = countDigits(val)
-// 			if ok {
-// 				var n1, n2 = split(val, nbDigits)
-// 				res = append(res, n1)
-// 				res = append(res, n2)
-// 			} else {
-// 				res = append(res, val*2024)
-// 			}
-// 		}
-// 	}
-// 	return res
-// }
+func sumMap(dict map[int]int) int {
+	var res int
+	for _, val := range dict {
+		res += val
+	}
+	return res
+}
 
 func solve(input string, loop int) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	var numbers []int = parse(lines[0])
-	var res int
-	for _, number := range numbers {
-		res += blinkNumber(number, loop)
+	var numbers map[int]int = parse(lines[0])
+	for range loop {
+		var newMap map[int]int = make(map[int]int)
+		for stone, number := range numbers {
+			var stone1, stone2, ok = blink(stone)
+			newMap[stone1] += number
+			if ok {
+				newMap[stone2] += number
+			}
+		}
+		numbers = newMap
 	}
-	return res
+	return sumMap(numbers)
 }
 
 func part1(input string) int {
