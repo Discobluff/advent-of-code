@@ -69,7 +69,8 @@ func occurrence(numbers []int) map[int]int {
 	return res
 }
 
-func part1(lines []string) int {
+func part1(input string) int {
+	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var s1, s2 []int = parse(lines)
 	s1 = sortTab(s1)
 	s2 = sortTab(s2)
@@ -80,7 +81,8 @@ func part1(lines []string) int {
 	return res
 }
 
-func part2(lines []string) int {
+func part2(input string) int {
+	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var s1, s2 []int = parse(lines)
 	var res int
 	var occurrences map[int]int = occurrence(s2)
@@ -91,13 +93,11 @@ func part2(lines []string) int {
 }
 
 func main() {
-	var input = strings.TrimSuffix(input, "\n")
-	var lines = strings.Split(input, "\n")
 	fmt.Println("--2024 day 01 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(lines))
+	fmt.Println("part1 : ", part1(input))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(lines))
+	fmt.Println("part2 : ", part2(input))
 	fmt.Println(time.Since(start))
 }
