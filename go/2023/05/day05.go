@@ -33,25 +33,6 @@ func getValues(str string) []int {
 	return convertSliceStringToSliceInt(strings.Split(str, " "))
 }
 
-func buildRange(start int, len int) []int {
-	var res []int = make([]int, len, len)
-	for i := start; i-start < len; i++ {
-		res[i-start] = i
-	}
-	return res
-}
-
-func buildRanges(tab []int) ([]int, []int) {
-	return buildRange(tab[1], tab[2]), buildRange(tab[0], tab[2])
-}
-
-func addToDict(str string, dict *map[int]int) {
-	tab1, tab2 := buildRanges(getValues(str))
-	for i := range len(tab1) {
-		(*dict)[tab1[i]] = tab2[i]
-	}
-}
-
 func minSlice(slice []int) int {
 	var res int = -1
 	for _, elem := range slice {
@@ -71,38 +52,49 @@ func isPresent(char byte, str string) bool {
 	return false
 }
 
-func parse(lines []string) []map[int]int {
+func parse(lines []string) [][][3]int {
 	var index int = -1
-	var dictTab []map[int]int
+	var res [][][3]int = make([][][3]int, 0)
 	for i := 1; i < len(lines); i++ {
 		if lines[i] == "" {
 			index += 1
-			dictTab = append(dictTab, make(map[int]int))
+			var newTab [][3]int
+			res = append(res, newTab)
 		} else {
 			if !isPresent(':', lines[i]) {
-				addToDict(lines[i], &dictTab[index])
+				res[index] = append(res[index], [3]int(getValues(lines[i])))
 			}
 		}
 	}
-	return dictTab
+	return res
+}
+
+func calcul(mapRange [3]int, val int) (int, bool) {
+	if mapRange[1] <= val && val < mapRange[1]+mapRange[2] {
+		return mapRange[0] + val - mapRange[1], true
+	}
+	return val, false
+}
+
+func calculSlice(tabMap [][3]int, val int) int {
+	for _, mapRange := range tabMap {
+		var newVal, ok = calcul(mapRange, val)
+		if ok {
+			return newVal
+		}
+	}
+	return val
 }
 
 func part1(lines []string) int {
 	var seeds []int = getSeeds(lines[0])
-	var dictTab = parse(lines)
-	var locationSeeds []int = make([]int, len(seeds), len(seeds))
-	return 0
-	for i, seed := range seeds {
-		var location int = seed
-		for _, dict := range dictTab {
-			value, exists := dict[location]
-			if exists {
-				location = value
-			}
+	var tabRanges [][][3]int = parse(lines)
+	for _, tabRange := range tabRanges {
+		for j, seed := range seeds {
+			seeds[j] = calculSlice(tabRange, seed)
 		}
-		locationSeeds[i] = location
 	}
-	return minSlice(locationSeeds)
+	return minSlice(seeds)
 }
 
 func main() {

@@ -50,7 +50,6 @@ func isSafe(numbers []int, ignore int) bool {
 	}
 	return true
 }
-
 func isSafe2(numbers []int) bool {
 	for i := -1; i < len(numbers); i++ {
 		if isSafe(numbers, i) {
@@ -68,7 +67,8 @@ func differences(numbers []int) []int {
 	return res
 }
 
-func part1(lines []string) int {
+func part1(input string) int {
+	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var res int
 	for _, line := range lines {
 		if isSafe(parse(strings.Split(line, " ")), -1) {
@@ -78,7 +78,8 @@ func part1(lines []string) int {
 	return res
 }
 
-func part2(lines []string) int {
+func part2(input string) int {
+	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var res int
 	for _, line := range lines {
 		if isSafe2(parse(strings.Split(line, " "))) {
@@ -89,14 +90,12 @@ func part2(lines []string) int {
 }
 
 func main() {
-	var input = strings.TrimSuffix(input, "\n")
-	var lines = strings.Split(input, "\n")
-	fmt.Println("--2024 day 01 solution--")
+	fmt.Println("--2024 day 02 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(lines))
+	fmt.Println("part1 : ", part1(input))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(lines))
+	fmt.Println("part2 : ", part2(input))
 	fmt.Println(time.Since(start))
 
 }
