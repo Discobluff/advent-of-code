@@ -17,8 +17,8 @@ Mostly written in Go
 | **11** | [Go](./go/2023/11/day11.go)| [Go](./go/2024/11/day11.go)🧪|
 | **12** | |[Go](./go/2024/12/day12.go)🧪|
 | **13** | |[Go](./go/2024/13/day13.go)🧪|
-| **14** | | |
-| **15** | | |
+| **14** | | [Go](./go/2024/14/day14.go)|
+| **15** | | [Go](./go/2024/15/day15.go)|
 | **16** | [Go](./go/2023/16/day16.go) | |
 
 Days with 🧪 are provided with a test file.
