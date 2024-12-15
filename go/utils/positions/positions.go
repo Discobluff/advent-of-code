@@ -1,15 +1,26 @@
 package positions
 
 type Position struct {
-	line, column int
+	Line, Column int
 }
 
-var N = Position{line: -1, column: 0}
-var S = Position{line: 1, column: 0}
-var E = Position{line: 0, column: 1}
-var W = Position{line: 0, column: -1}
-var directions = map[byte]Position{'<': W, '>': E, '^': N, 'v': S}
+var N = Position{Line: -1, Column: 0}
+var S = Position{Line: 1, Column: 0}
+var E = Position{Line: 0, Column: 1}
+var W = Position{Line: 0, Column: -1}
+var Directions = map[byte]Position{'<': W, '>': E, '^': N, 'v': S}
 
-func addPositions(pos1 Position, pos2 Position) Position {
-	return Position{line: pos1.line + pos2.line, column: pos1.column + pos2.column}
+func AddPositions(pos1 Position, pos2 Position) Position {
+	return Position{Line: pos1.Line + pos2.Line, Column: pos1.Column + pos2.Column}
+}
+
+func SearchStartGrid(grid [][]byte, start byte) Position {
+	for i, line := range grid {
+		for j, char := range line {
+			if char == start {
+				return Position{Line: i, Column: j}
+			}
+		}
+	}
+	return Position{Line: -1, Column: -1}
 }
