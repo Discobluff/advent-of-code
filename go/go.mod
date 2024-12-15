@@ -1,3 +1,3 @@
-module github.com/Discobluff/advent-of-code/go
+module gibson.telecomnancy.univ-lorraine.fr/projets/2425/aoc-dartoy9u
 
-go 1.23.4
+go 1.23.3
