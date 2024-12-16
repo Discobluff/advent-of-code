@@ -9,7 +9,7 @@ import (
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
 )
 
-//go:embed test1.txt
+//go:embed input.txt
 var input string
 
 type StepPath struct {
@@ -22,34 +22,21 @@ func isValid(grid []string, pos Position) bool {
 	return grid[pos.Line][pos.Column] != '#'
 }
 
-func copy(dict map[Position]struct{}) map[Position]struct{} {
-	var res = make(map[Position]struct{})
-	for key := range dict {
-		res[key] = struct{}{}
+func best(scores map[StepPath]int, pos1 StepPath, pos2 StepPath, score int) int {
+	var _, ok = scores[pos1]
+	if !ok {
+		return scores[pos2] + score
 	}
-	return res
+	if scores[pos1] < scores[pos2]+score {
+		return scores[pos1]
+	}
+	return scores[pos2] + score
 }
 
-func best(scores [][]int, pos1 Position, pos2 Position, score int) int {
-	if scores[pos1.Line][pos1.Column] == -1 {
-		return scores[pos2.Line][pos2.Column] + score
-	}
-	if scores[pos1.Line][pos1.Column] < scores[pos2.Line][pos2.Column]+score {
-		return scores[pos1.Line][pos1.Column]
-	}
-	return scores[pos2.Line][pos2.Column] + score
-}
-
-func display(scores [][]int) {
-	for _, line := range scores {
-		fmt.Println(line)
-	}
-}
-
-func insert(tab []StepPath, scores [][]int, step StepPath) []StepPath {
+func insert(tab []StepPath, scores map[StepPath]int, step StepPath) []StepPath {
 	var index int = -1
 	for i, pos := range tab {
-		if scores[pos.pos.Line][pos.pos.Column] > scores[step.pos.Line][step.pos.Column] {
+		if scores[pos] > scores[step] {
 			index = i
 			break
 		}
@@ -65,36 +52,30 @@ func insert(tab []StepPath, scores [][]int, step StepPath) []StepPath {
 
 }
 
-func solve(grid []string, start Position) [][]int {
-	var scores [][]int = make([][]int, len(grid))
-	for i, line := range grid {
-		scores[i] = make([]int, len(line))
-		for j := range line {
-			scores[i][j] = -1
-		}
-	}
-	scores[start.Line][start.Column] = 0
+func solve(grid []string, start Position) map[StepPath]int {
+	var scores map[StepPath]int = make(map[StepPath]int)
+	scores[StepPath{pos: start, direction: E}] = 0
 	var nexts []StepPath = make([]StepPath, 1)
 	nexts[0] = StepPath{pos: start, direction: E}
-	var visited map[Position]struct{} = make(map[Position]struct{})
+	var visited map[StepPath]struct{} = make(map[StepPath]struct{})
 	for len(nexts) > 0 {
 		var position = nexts[0]
 		nexts = nexts[1:]
-		var _, ok = visited[position.pos]
+		var _, ok = visited[position]
 		if !ok {
-			visited[position.pos] = struct{}{}
+			visited[position] = struct{}{}
 			for _, direction := range DirectionsSlice {
 				if direction != OpposedDirection(position.direction) {
-					var newPos = AddPositions(position.pos, direction)
-					if isValid(grid, newPos) {
-						var newScore int
-						if direction == position.direction {
-							newScore = best(scores, newPos, position.pos, 1)
-						} else {
-							newScore = best(scores, newPos, position.pos, 1001)
+					if direction == position.direction {
+						var newPos = AddPositions(position.pos, direction)
+						if isValid(grid, newPos) {
+							scores[StepPath{pos: newPos, direction: direction}] = best(scores, StepPath{pos: newPos, direction: direction}, position, 1)
+							nexts = insert(nexts, scores, StepPath{pos: newPos, direction: direction})
 						}
-						scores[newPos.Line][newPos.Column] = newScore
-						nexts = insert(nexts, scores, StepPath{pos: newPos, direction: direction})
+					} else {
+						var newPos = StepPath{pos: position.pos, direction: direction}
+						scores[newPos] = best(scores, newPos, position, 1000)
+						nexts = insert(nexts, scores, newPos)
 					}
 				}
 			}
@@ -103,79 +84,67 @@ func solve(grid []string, start Position) [][]int {
 	return scores
 }
 
-func next(dict map[Position]struct{}) Position {
-	for pos := range dict {
-		return pos
-	}
-	return Position{Line: -1, Column: -1}
-}
-func displayV(height int, length int, dict map[Position]struct{}) {
-	var tab [][]int = make([][]int, height)
-	for i := range height {
-		tab[i] = make([]int, length)
-	}
-	for pos := range dict {
-		tab[pos.Line][pos.Column] = 1
-	}
-	for _, line := range tab {
-		fmt.Println(line)
-	}
-}
-
-func getScore(scores [][]int, pos Position) int {
-	return scores[pos.Line][pos.Column]
-}
-
-func explore2(scores [][]int, end Position, grid []string) int {
-	var visited map[Position]struct{} = make(map[Position]struct{})
-	var nexts map[Position]struct{} = make(map[Position]struct{})
+func shortestPaths(scores map[StepPath]int, end StepPath) int {
+	var visitedPos map[Position]struct{} = make(map[Position]struct{})
+	var visited map[StepPath]struct{} = make(map[StepPath]struct{})
+	var nexts map[StepPath]struct{} = make(map[StepPath]struct{})
 	nexts[end] = struct{}{}
 	for len(nexts) > 0 {
-		var pos = next(nexts)
-		delete(nexts, pos)
-		var _, ok = visited[pos]
+		var position StepPath = next(nexts)
+		delete(nexts, position)
+		visitedPos[position.pos] = struct{}{}
+		var _, ok = visited[position]
 		if !ok {
-			visited[pos] = struct{}{}
-			var score = getScore(scores, pos)
+			visited[position] = struct{}{}
 			for _, direction := range DirectionsSlice {
-				var newPos = AddPositions(pos, direction)
-				var scoreNew = getScore(scores, newPos)
-				if direction == S {
-
-					var ter = AddPositions(newPos, W)
-					if scoreNew != -1 && (scoreNew == score-1 || scoreNew == score-1001 || (isValid(grid, ter) && getScore(scores, ter) == score-2)) {
-						nexts[newPos] = struct{}{}
-						fmt.Println("ouba", (isValid(grid, ter) && getScore(scores, ter) == score-2))
-					}
-				} else {
-					if scoreNew != -1 && (scoreNew == score-1 || scoreNew == score-1001) {
-						nexts[newPos] = struct{}{}
+				if direction != position.direction {
+					if direction == OpposedDirection(position.direction) {
+						var newPos = AddPositions(position.pos, direction)
+						if scores[StepPath{pos: newPos, direction: position.direction}] == scores[position]-1 {
+							nexts[StepPath{pos: newPos, direction: position.direction}] = struct{}{}
+						}
+					} else {
+						var newPos = StepPath{pos: position.pos, direction: direction}
+						if scores[newPos] == scores[position]-1000 {
+							nexts[newPos] = struct{}{}
+						}
 					}
 				}
 			}
 		}
 	}
-	fmt.Println(visited)
-	displayV(15, 15, visited)
-	return len(visited)
+	return len(visitedPos)
+}
+
+func next(dict map[StepPath]struct{}) StepPath {
+	for pos := range dict {
+		return pos
+	}
+	var posNil = Position{Line: -1, Column: -1}
+	return StepPath{pos: posNil, direction: posNil}
 }
 
 func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var start Position = SearchStartLines(lines, 'S')
 	var end Position = SearchStartLines(lines, 'E')
-	var scores [][]int = solve(lines, start)
-	return scores[end.Line][end.Column]
+	var scores map[StepPath]int = solve(lines, start)
+	var res int = -1
+	for _, direction := range DirectionsSlice {
+		var val, ok = scores[StepPath{pos: end, direction: direction}]
+		if ok && (res == -1 || val < res) {
+			res = val
+		}
+	}
+	return res
 }
 
 func part2(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var start Position = SearchStartLines(lines, 'S')
 	var end Position = SearchStartLines(lines, 'E')
-	var scores [][]int = solve(lines, start)
-	display(scores)
-	// displayV()
-	return explore2(scores, end, lines)
+	var scores map[StepPath]int = solve(lines, start)
+	return shortestPaths(scores, StepPath{pos: end, direction: N})
 }
 
 func main() {
