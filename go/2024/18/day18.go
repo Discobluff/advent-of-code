@@ -17,7 +17,7 @@ func parse(line string) Position {
 	var numbers = strings.Split(line, ",")
 	var x, _ = strconv.Atoi(numbers[0])
 	var y, _ = strconv.Atoi(numbers[1])
-	return Position{Line: y, Column: x}
+	return DefPosition(y, x)
 }
 
 func isValidWalls(size int, walls map[Position]struct{}) func(Position) bool {
@@ -47,8 +47,8 @@ func part1(input string) int {
 		walls[parse(line)] = struct{}{}
 	}
 	var scores = initScore(size)
-	Dijkstra(Position{Line: 0, Column: 0}, isValidWalls(size, walls), DefaultBest, &scores)
-	return GetScore(Position{Line: size - 1, Column: size - 1}, scores)
+	Dijkstra(DefPosition(0, 0), isValidWalls(size, walls), DefaultBest, &scores)
+	return GetScore(DefPosition(size-1, size-1), scores)
 }
 
 func part2(input string) string {
@@ -58,7 +58,7 @@ func part2(input string) string {
 	var walls map[Position]struct{} = make(map[Position]struct{})
 	for true {
 		walls[parse(lines[limitIndex])] = struct{}{}
-		var scores [][]int = initScore(size)
+		var scores = initScore(size)
 		Dijkstra(DefPosition(0, 0), isValidWalls(size, walls), DefaultBest, &scores)
 		if GetScore(DefPosition(size-1, size-1), scores) == -1 {
 			return lines[limitIndex]
