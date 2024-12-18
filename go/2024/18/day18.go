@@ -9,7 +9,6 @@ import (
 
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
 	. "github.com/Discobluff/advent-of-code/go/utils/search"
-	. "github.com/Discobluff/advent-of-code/go/utils/set"
 )
 
 //go:embed input.txt
@@ -39,34 +38,30 @@ func isValid2(size int, walls []Position, limit int, pos Position) bool {
 	return true
 }
 
-func funcNeighbors(size int, walls map[Position]struct{}) func(Position) Set[Position] {
-	return func(pos Position) Set[Position] {
-		var res = DefSet[Position]()
+func funcNeighbors(size int, walls map[Position]struct{}) func(Position) map[Position]int {
+	return func(pos Position) map[Position]int {
+		var res map[Position]int = make(map[Position]int)
 		for _, direction := range DirectionsSlice {
 			var newPos Position = AddPositions(pos, direction)
 			if isValid(size, walls, newPos) {
-				Add(res, newPos)
+				res[newPos] = 1
 			}
 		}
 		return res
 	}
 }
 
-func funcNeighbors2(size int, walls []Position, limit int) func(Position) Set[Position] {
-	return func(pos Position) Set[Position] {
-		var res = DefSet[Position]()
+func funcNeighbors2(size int, walls []Position, limit int) func(Position) map[Position]int {
+	return func(pos Position) map[Position]int {
+		var res map[Position]int = make(map[Position]int)
 		for _, direction := range DirectionsSlice {
 			var newPos Position = AddPositions(pos, direction)
 			if isValid2(size, walls, limit, newPos) {
-				Add(res, newPos)
+				res[newPos] = 1
 			}
 		}
 		return res
 	}
-}
-
-func cost(p1 Position, p2 Position) int {
-	return 1
 }
 
 func part1(input string) int {
@@ -77,12 +72,12 @@ func part1(input string) int {
 	for _, line := range lines[2 : limit+2] {
 		walls[parse(line)] = struct{}{}
 	}
-	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors(size, walls), cost)
+	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors(size, walls))
 	return scores[DefPosition(size-1, size-1)]
 }
 
 func good(walls []Position, size int, index int) bool {
-	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors2(size, walls, index), cost)
+	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors2(size, walls, index))
 	var _, ok = scores[DefPosition(size-1, size-1)]
 	return ok
 }

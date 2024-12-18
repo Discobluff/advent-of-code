@@ -19,7 +19,7 @@ func bestDijkstra[T comparable](scores map[T]int, t1 T, score2 int) int {
 	return min(score1, score2)
 }
 
-func Dijkstra[T comparable](start T, neighbors func(T) Set[T], cost func(T, T) int) map[T]int {
+func Dijkstra[T comparable](start T, neighbors func(T) map[T]int) map[T]int {
 	var scores map[T]int = make(map[T]int)
 	scores[start] = 0
 	var nexts = DefQueue[T]()
@@ -30,10 +30,9 @@ func Dijkstra[T comparable](start T, neighbors func(T) Set[T], cost func(T, T) i
 		var _, ok = visited[next]
 		if !ok {
 			Add(visited, next)
-			for neighbor := range neighbors(next) {
-				scores[neighbor] = bestDijkstra(scores, neighbor, scores[next]+cost(next, neighbor))
-				// AddQueue(&nexts, neighbor, cmpDijkstra(scores))
-				nexts = append(nexts, neighbor)
+			for neighbor, cost := range neighbors(next) {
+				scores[neighbor] = bestDijkstra(scores, neighbor, scores[next]+cost)
+				AddQueue(&nexts, neighbor, cmpDijkstra(scores))
 			}
 		}
 	}
