@@ -1,9 +1,5 @@
 package positions
 
-import (
-	. "github.com/Discobluff/advent-of-code/go/utils/priorityQueue"
-)
-
 type Position struct {
 	Line, Column int
 }
@@ -55,36 +51,6 @@ func SetScore(pos Position, val int, scores *[][]int) {
 
 func GetScore(pos Position, scores [][]int) int {
 	return scores[pos.Line][pos.Column]
-}
-
-func cmpDijkstra(scores [][]int) func(Position, Position) bool {
-	return func(p1 Position, p2 Position) bool {
-		if GetScore(p1, scores) == -1 {
-			return false
-		}
-		return GetScore(p1, scores) <= GetScore(p2, scores)
-	}
-}
-
-func Dijkstra(start Position, isValid func(Position) bool, setBest func(Position, Position, *[][]int), scores *[][]int) {
-	SetScore(start, 0, scores)
-	var nexts = DefQueue[Position]()
-	AddQueue(&nexts, start, cmpDijkstra(*scores))
-	var visited map[Position]struct{} = make(map[Position]struct{})
-	for !IsEmpty(nexts) {
-		var next = PopQueue(&nexts)
-		var _, ok = visited[next]
-		if !ok {
-			visited[next] = struct{}{}
-			for _, direction := range DirectionsSlice {
-				var newPos Position = AddPositions(next, direction)
-				if isValid(newPos) {
-					setBest(newPos, next, scores)
-					nexts = append(nexts, newPos)
-				}
-			}
-		}
-	}
 }
 
 func DefaultBest(pos1 Position, pos2 Position, scores *[][]int) {

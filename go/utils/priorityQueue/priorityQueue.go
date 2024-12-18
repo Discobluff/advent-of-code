@@ -21,7 +21,7 @@ func AddQueue[T any](q *pQueue[T], elem T, cmp func(T, T) bool) {
 	if index >= len(*q) {
 		(*q) = append((*q), elem)
 	} else {
-		(*q) = append((*q), (*q)[index])
+		(*q) = append((*q), (*q)[len(*q)-1])
 		for i := len(*q) - 2; i > index; i-- {
 			(*q)[i] = (*q)[i-1]
 		}
