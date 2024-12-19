@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -64,6 +65,16 @@ func funcNeighbors2(size int, walls []Position, limit int) func(Position) map[Po
 	}
 }
 
+func abs(x int) int {
+	return int(math.Abs(float64(x)))
+}
+
+func heuristic(end Position) func(Position) int {
+	return func(pos Position) int {
+		return abs(end.Line-pos.Line) + abs(end.Column-pos.Column)
+	}
+}
+
 func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var size, _ = strconv.Atoi(lines[0])
@@ -72,12 +83,12 @@ func part1(input string) int {
 	for _, line := range lines[2 : limit+2] {
 		walls[parse(line)] = struct{}{}
 	}
-	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors(size, walls))
-	return scores[DefPosition(size-1, size-1)]
+	var scores = AStar(DefPosition(0, 0), DefPosition(size-1, size-1), heuristic(DefPosition(size-1, size-1)), funcNeighbors(size, walls), 1, 1)
+	return scores[DefPosition(size-1, size-1)].Score
 }
 
 func good(walls []Position, size int, index int) bool {
-	var scores = Dijkstra(DefPosition(0, 0), funcNeighbors2(size, walls, index))
+	var scores = AStar(DefPosition(0, 0), DefPosition(size-1, size-1), heuristic(DefPosition(size-1, size-1)), funcNeighbors2(size, walls, index), 1, 1)
 	var _, ok = scores[DefPosition(size-1, size-1)]
 	return ok
 }
