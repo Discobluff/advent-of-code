@@ -11,8 +11,11 @@ import (
 var input string
 
 func start(t1 string, t2 string) bool {
+	if len(t1) > len(t2) {
+		return false
+	}
 	for i := range t1 {
-		if i >= len(t2) || t1[i] != t2[i] {
+		if t1[i] != t2[i] {
 			return false
 		}
 	}
@@ -24,14 +27,17 @@ func possible1(towels []string, towel string, dict map[string]bool) bool {
 	if ok {
 		return result
 	}
-	var res bool
 	for _, t := range towels {
 		if start(t, towel) {
-			res = res || possible1(towels, towel[len(t):], dict)
+			if possible1(towels, towel[len(t):], dict) {
+				// dict[towel] = true
+				return true
+			}
+
 		}
 	}
-	dict[towel] = res
-	return res
+	dict[towel] = false
+	return false
 
 }
 
