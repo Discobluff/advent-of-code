@@ -22,26 +22,7 @@ func start(t1 string, t2 string) bool {
 	return true
 }
 
-func possible1(towels []string, towel string, dict map[string]bool) bool {
-	var result, ok = dict[towel]
-	if ok {
-		return result
-	}
-	for _, t := range towels {
-		if start(t, towel) {
-			if possible1(towels, towel[len(t):], dict) {
-				// dict[towel] = true
-				return true
-			}
-
-		}
-	}
-	dict[towel] = false
-	return false
-
-}
-
-func possible2(towels []string, towel string, dict map[string]int) int {
+func possible(towels []string, towel string, dict map[string]int) int {
 	var result, ok = dict[towel]
 	if ok {
 		return result
@@ -49,7 +30,7 @@ func possible2(towels []string, towel string, dict map[string]int) int {
 	var res int
 	for _, t := range towels {
 		if start(t, towel) {
-			res += possible2(towels, towel[len(t):], dict)
+			res += possible(towels, towel[len(t):], dict)
 		}
 	}
 	dict[towel] = res
@@ -61,10 +42,10 @@ func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var towels []string = strings.Split(lines[0], ", ")
 	var res int
-	var dict map[string]bool = make(map[string]bool)
-	dict[""] = true
+	var dict map[string]int = make(map[string]int)
+	dict[""] = 1
 	for _, towel := range lines[2:] {
-		if possible1(towels, towel, dict) {
+		if possible(towels, towel, dict) != 0 {
 			res++
 		}
 	}
@@ -81,7 +62,7 @@ func part2(input string) int {
 	var dict map[string]int = make(map[string]int)
 	dict[""] = 1
 	for _, towel := range lines[2:] {
-		res += possible2(towels, towel, dict)
+		res += possible(towels, towel, dict)
 	}
 	return res
 }
