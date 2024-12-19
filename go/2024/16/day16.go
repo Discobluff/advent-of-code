@@ -7,6 +7,7 @@ import (
 	"time"
 
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
+	. "github.com/Discobluff/advent-of-code/go/utils/search"
 )
 
 //go:embed input.txt
@@ -16,72 +17,26 @@ type StepPath struct {
 	pos, direction Position
 }
 
-var Scores [][]int
-
-func isValid(grid []string, pos Position) bool {
-	return grid[pos.Line][pos.Column] != '#'
-}
-
-func best(scores map[StepPath]int, pos1 StepPath, pos2 StepPath, score int) int {
-	var _, ok = scores[pos1]
-	if !ok {
-		return scores[pos2] + score
-	}
-	if scores[pos1] < scores[pos2]+score {
-		return scores[pos1]
-	}
-	return scores[pos2] + score
-}
-
-func insert(tab []StepPath, scores map[StepPath]int, step StepPath) []StepPath {
-	var index int = -1
-	for i, pos := range tab {
-		if scores[pos] > scores[step] {
-			index = i
-			break
-		}
-	}
-	if index != -1 {
-		var res []StepPath
-		res = append(res, tab[:index]...)
-		res = append(res, step)
-		res = append(res, tab[index:]...)
-		return res
-	}
-	return append(tab, step)
-
-}
-
-func solve(grid []string, start Position) map[StepPath]int {
-	var scores map[StepPath]int = make(map[StepPath]int)
-	scores[StepPath{pos: start, direction: E}] = 0
-	var nexts []StepPath = make([]StepPath, 1)
-	nexts[0] = StepPath{pos: start, direction: E}
-	var visited map[StepPath]struct{} = make(map[StepPath]struct{})
-	for len(nexts) > 0 {
-		var position = nexts[0]
-		nexts = nexts[1:]
-		var _, ok = visited[position]
-		if !ok {
-			visited[position] = struct{}{}
-			for _, direction := range DirectionsSlice {
-				if direction != OpposedDirection(position.direction) {
-					if direction == position.direction {
-						var newPos = AddPositions(position.pos, direction)
-						if isValid(grid, newPos) {
-							scores[StepPath{pos: newPos, direction: direction}] = best(scores, StepPath{pos: newPos, direction: direction}, position, 1)
-							nexts = insert(nexts, scores, StepPath{pos: newPos, direction: direction})
-						}
-					} else {
-						var newPos = StepPath{pos: position.pos, direction: direction}
-						scores[newPos] = best(scores, newPos, position, 1000)
-						nexts = insert(nexts, scores, newPos)
-					}
+func funcNeighbors(grid []string) func(StepPath) map[StepPath]int {
+	return func(step StepPath) map[StepPath]int {
+		var res = make(map[StepPath]int)
+		for _, direction := range DirectionsSlice {
+			if direction == step.direction {
+				var newPos Position = AddPositions(step.pos, direction)
+				if grid[newPos.Line][newPos.Column] != '#' {
+					res[StepPath{pos: newPos, direction: direction}] = 1
+				}
+			} else {
+				if direction != OpposedDirection(step.direction) {
+					res[StepPath{pos: step.pos, direction: direction}] = 1000
 				}
 			}
 		}
+		return res
 	}
-	return scores
+}
+func solve(grid []string, start Position) map[StepPath]int {
+	return Dijkstra(StepPath{pos: start, direction: E}, funcNeighbors(grid))
 }
 
 func shortestPaths(scores map[StepPath]int, end StepPath) int {
