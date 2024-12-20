@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"slices"
 	"strings"
 	"time"
 
@@ -61,7 +60,6 @@ func part1(input string) int {
 	var start Position = SearchStartLines(lines, 'S')
 	var end Position = SearchStartLines(lines, 'E')
 	var positions []Position = getPositionsFair(lines, start, S, end)
-	slices.Reverse(positions)
 	var res int
 	for i, p1 := range positions {
 		for j := i + 1; j < len(positions); j++ {
@@ -91,7 +89,6 @@ func part2(input string) int {
 	var end Position = SearchStartLines(lines, 'E')
 	var direction Position = getFirstDirection(lines, start)
 	var positions []Position = getPositionsFair(lines, start, direction, end)
-	slices.Reverse(positions)
 	var res int
 	for i, p1 := range positions {
 		for j := i + 2; j < len(positions); j++ {
