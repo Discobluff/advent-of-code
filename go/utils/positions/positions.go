@@ -1,5 +1,7 @@
 package positions
 
+import "math"
+
 type Position struct {
 	Line, Column int
 }
@@ -21,6 +23,18 @@ func OpposedDirection(pos Position) Position {
 
 func AddPositions(pos1 Position, pos2 Position) Position {
 	return DefPosition(pos1.Line+pos2.Line, pos1.Column+pos2.Column)
+}
+
+func Eval(grid []string, pos Position) byte {
+	return grid[pos.Line][pos.Column]
+}
+
+func Abs(x int) int {
+	return int(math.Abs(float64(x)))
+}
+
+func Distance(p1 Position, p2 Position) int {
+	return Abs(p1.Line-p2.Line) + Abs(p1.Column-p2.Column)
 }
 
 func SearchStartGrid(grid [][]byte, start byte) Position {
