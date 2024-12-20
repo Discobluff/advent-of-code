@@ -21,59 +21,59 @@ func isValidFair(grid []string, pos Position) bool {
 	return isValidSize(grid, pos) && Eval(grid, pos) != '#'
 }
 
-func getTimeFair(grid []string, start Position, lastDirection Position, end Position) []Position {
+func getTimeFair(grid []string, start Position, lastDirection Position, end Position) int {
 	if start == end {
-		return []Position{end}
+		return 1
 	}
 	for _, direction := range DirectionsSlice {
 		if direction != OpposedDirection(lastDirection) {
 			var newPos = AddPositions(start, direction)
 			if isValidFair(grid, newPos) {
-				return append(getTimeFair(grid, newPos, direction, end), start)
+				return 1 + getTimeFair(grid, newPos, direction, end)
 			}
 		}
 	}
-	return []Position{}
+	return 0
 }
+
+func getPositionsFair(grid []string, start Position, lastDirection Position, end Position) []Position {
+	var length int = getTimeFair(grid, start, lastDirection, end)
+	var res []Position = make([]Position, length)
+	for i := range length - 1 {
+		for _, direction := range DirectionsSlice {
+			if direction != OpposedDirection(lastDirection) {
+				var newPos = AddPositions(start, direction)
+				if isValidFair(grid, newPos) {
+					res[i] = start
+					start = newPos
+					lastDirection = direction
+					break
+				}
+			}
+		}
+	}
+	res[length-1] = end
+	return res
+}
+
 func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var start Position = SearchStartLines(lines, 'S')
 	var end Position = SearchStartLines(lines, 'E')
-	var positions []Position = getTimeFair(lines, start, S, end)
+	var positions []Position = getPositionsFair(lines, start, S, end)
 	slices.Reverse(positions)
 	var res int
 	for i, p1 := range positions {
-		for j, p2 := range positions {
-			if j > i && Abs(p1.Line-p2.Line) == 2 && p1.Column == p2.Column {
-				// if Eval(lines, DefPosition(min(p1.Line, p2.Line)+1, p1.Column)) == '#' {
+		for j := i + 1; j < len(positions); j++ {
+			var p2 Position = positions[j]
+			if Distance(p1, p2) == 2 && (p1.Line == p2.Line || p1.Column == p2.Column) {
 				if j-i-2 >= 100 {
 					res++
 				}
-				// }
-			}
-			if j > i && Abs(p1.Column-p2.Column) == 2 && p1.Line == p2.Line {
-				// if Eval(lines, DefPosition(p1.Line, min(p1.Column, p2.Column)+1)) == '#' {
-				if j-i-2 >= 100 {
-					res++
-				}
-				// }
 			}
 		}
 	}
 	return res
-}
-
-func funcNeighbors(grid []string, end Position) func(Position) map[Position]int {
-	return func(pos Position) map[Position]int {
-		var res map[Position]int = make(map[Position]int)
-		for _, direction := range DirectionsSlice {
-			var newPos Position = AddPositions(pos, direction)
-			if newPos == end || (newPos.Column >= min(pos.Column, end.Column) && newPos.Column <= max(pos.Column, end.Column) && newPos.Line >= min(pos.Line, end.Line) && newPos.Line <= max(pos.Line, end.Line) && Eval(grid, newPos) == '#') {
-				res[newPos] = 1
-			}
-		}
-		return res
-	}
 }
 
 func getFirstDirection(grid []string, start Position) Position {
@@ -90,13 +90,13 @@ func part2(input string) int {
 	var start Position = SearchStartLines(lines, 'S')
 	var end Position = SearchStartLines(lines, 'E')
 	var direction Position = getFirstDirection(lines, start)
-	var positions []Position = getTimeFair(lines, start, direction, end)
+	var positions []Position = getPositionsFair(lines, start, direction, end)
 	slices.Reverse(positions)
 	var res int
 	for i, p1 := range positions {
 		for j := i + 2; j < len(positions); j++ {
 			var p2 Position = positions[j]
-			if j > i && Distance(p1, p2) <= 20 {
+			if Distance(p1, p2) <= 20 {
 				if j-i-Distance(p1, p2) >= 100 {
 					res++
 				}
