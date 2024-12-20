@@ -16,7 +16,7 @@ func isPoint(char byte) bool {
 	return char == 46
 }
 
-// 0 = left, 1 = right, 2 = up, 3 = bottom
+// 0 = left, 1 = right, 2 = up, 3 = down
 func propagate(grid []string, dir direction, laser *[][]bool) (int, int, byte) {
 	var char byte
 	line, column, sens := decomposeDirection(dir)
