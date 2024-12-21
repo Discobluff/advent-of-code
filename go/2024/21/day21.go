@@ -3,13 +3,14 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
 )
 
-//go:embed test.txt
+//go:embed input.txt
 var input string
 
 type Path struct {
@@ -88,28 +89,69 @@ func deepCopy(t [][]byte) [][]byte {
 	return res
 }
 
+func lenMini(t [][]byte) (int, int) {
+	var res int = -1
+	var count int = 0
+	for _, path := range t {
+		if len(path) == res {
+			count++
+		}
+		if res == -1 || len(path) < res {
+			res = len(path)
+			count = 1
+		}
+	}
+	return res, count
+}
+
+func complexity(s string) int {
+	var res, _ = strconv.Atoi(s[:len(s)-1])
+	return res
+}
+
 func part1(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-
-	for _, code := range lines[:1] {
-		var pathK [][]byte
+	var res int
+	for _, code := range lines {
+		var pathKeyPad [][]byte
 		var start Position = keypad['A']
 		for _, digit := range code {
-			pathK = deepCopy(cartesianProduct(pathK, pathsKeyPad(start, keypad[byte(digit)], keypad[' '])))
+			pathKeyPad = deepCopy(cartesianProduct(pathKeyPad, pathsKeyPad(start, keypad[byte(digit)], keypad[' '])))
 			start = keypad[byte(digit)]
 		}
-		for _, path := range pathK {
+		var pathKKK [][]byte
+		for _, path := range pathKeyPad {
 			var pathKK [][]byte
 			var start2 Position = directionalpad['A']
 			for _, p := range path {
 				pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
 				start2 = directionalpad[p]
 			}
-			displayPath(pathKK)
-			fmt.Printf("%s\n", path)
+			pathKKK = append(pathKKK, pathKK...)
 		}
+		// displayPath(pathKKK)
+		var pathKKKK [][]byte
+		for _, path := range pathKKK {
+			var pathKK [][]byte
+			var start2 Position = directionalpad['A']
+			for _, p := range path {
+				pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
+				start2 = directionalpad[p]
+			}
+			pathKKKK = append(pathKKKK, pathKK...)
+		}
+		var m, _ = lenMini(pathKKKK)
+		res += m * complexity(code)
+		// var pathKKK [][]byte
+		// for _, path := range pathKK {
+		// 	var start2 Position = directionalpad['A']
+		// 	for _, p := range path {
+		// 		pathKKK = deepCopy(cartesianProduct(pathKKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
+		// 		start2 = directionalpad[p]
+		// 	}
+		// }
 	}
-	return 0
+	return res
 }
 
 // func part2(input string) int {
