@@ -110,29 +110,27 @@ func complexity(s string) int {
 }
 
 func part1(input string) int {
-	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var res int
-	for _, code := range lines {
-		var pathKeyPad [][]byte
-		var start Position = keypad['A']
-		for _, digit := range code {
-			pathKeyPad = deepCopy(cartesianProduct(pathKeyPad, pathsKeyPad(start, keypad[byte(digit)], keypad[' '])))
-			start = keypad[byte(digit)]
-		}
-		for range 2 {
-			var pathDirectionalPad [][]byte
-			for _, path := range pathKeyPad {
-				var pathKK [][]byte
-				var start2 Position = directionalpad['A']
-				for _, p := range path {
-					pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
-					start2 = directionalpad[p]
+	var codes = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	var pads []map[byte]Position = []map[byte]Position{keypad, directionalpad, directionalpad}
+	for _, code := range codes {
+		var paths [][]byte
+		paths = append(paths, []byte(code))
+		for i := range 3 {
+			var pathKeyPad [][]byte
+			for _, path := range paths {
+				var start Position = pads[i]['A']
+				var path2 [][]byte
+				for _, digit := range path {
+					path2 = deepCopy(cartesianProduct(path2, pathsKeyPad(start, pads[i][byte(digit)], pads[i][' '])))
+					start = pads[i][byte(digit)]
 				}
-				pathDirectionalPad = append(pathDirectionalPad, pathKK...)
+				pathKeyPad = append(pathKeyPad, path2...)
 			}
-			pathKeyPad = deepCopy(pathDirectionalPad)
+			paths = deepCopy(pathKeyPad)
+			paths = pathKeyPad
 		}
-		var m, _ = lenMini(pathKeyPad)
+		var m, _ = lenMini(paths)
 		res += m * complexity(code)
 	}
 	return res
