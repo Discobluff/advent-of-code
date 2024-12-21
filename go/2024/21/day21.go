@@ -119,37 +119,21 @@ func part1(input string) int {
 			pathKeyPad = deepCopy(cartesianProduct(pathKeyPad, pathsKeyPad(start, keypad[byte(digit)], keypad[' '])))
 			start = keypad[byte(digit)]
 		}
-		var pathKKK [][]byte
-		for _, path := range pathKeyPad {
-			var pathKK [][]byte
-			var start2 Position = directionalpad['A']
-			for _, p := range path {
-				pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
-				start2 = directionalpad[p]
+		for range 2 {
+			var pathDirectionalPad [][]byte
+			for _, path := range pathKeyPad {
+				var pathKK [][]byte
+				var start2 Position = directionalpad['A']
+				for _, p := range path {
+					pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
+					start2 = directionalpad[p]
+				}
+				pathDirectionalPad = append(pathDirectionalPad, pathKK...)
 			}
-			pathKKK = append(pathKKK, pathKK...)
+			pathKeyPad = deepCopy(pathDirectionalPad)
 		}
-		// displayPath(pathKKK)
-		var pathKKKK [][]byte
-		for _, path := range pathKKK {
-			var pathKK [][]byte
-			var start2 Position = directionalpad['A']
-			for _, p := range path {
-				pathKK = deepCopy(cartesianProduct(pathKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
-				start2 = directionalpad[p]
-			}
-			pathKKKK = append(pathKKKK, pathKK...)
-		}
-		var m, _ = lenMini(pathKKKK)
+		var m, _ = lenMini(pathKeyPad)
 		res += m * complexity(code)
-		// var pathKKK [][]byte
-		// for _, path := range pathKK {
-		// 	var start2 Position = directionalpad['A']
-		// 	for _, p := range path {
-		// 		pathKKK = deepCopy(cartesianProduct(pathKKK, pathsKeyPad(start2, directionalpad[p], directionalpad[' '])))
-		// 		start2 = directionalpad[p]
-		// 	}
-		// }
 	}
 	return res
 }
