@@ -1,5 +1,7 @@
 package set
 
+import "maps"
+
 type Set[T comparable] map[T]struct{}
 
 func DefSet[T comparable]() Set[T] {
@@ -17,6 +19,26 @@ func Add[T comparable](s Set[T], elem T) {
 
 func Remove[T comparable](s Set[T], elem T) {
 	delete(s, elem)
+}
+
+func Equal[T comparable](s1 Set[T], s2 Set[T]) bool {
+	return maps.Equal(s1, s2)
+}
+
+func Without[T comparable](s Set[T], e T) Set[T] {
+	var newS = DefSet[T]()
+	Add(newS, e)
+	return Deprived(s, newS)
+}
+
+func SetToSlice[T comparable](s Set[T]) []T {
+	var res []T = make([]T, len(s))
+	var index int
+	for e := range s {
+		res[index] = e
+		index++
+	}
+	return res
 }
 
 func Union[T comparable](s1 Set[T], s2 Set[T]) Set[T] {
