@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	. "github.com/Discobluff/advent-of-code/go/utils/graph"
 	. "github.com/Discobluff/advent-of-code/go/utils/set"
 )
 
@@ -29,12 +30,6 @@ func parse(lines []string) []Set[string] {
 	return res
 }
 
-func funcEqual(s Set[string]) func(Set[string]) bool {
-	return func(e Set[string]) bool {
-		return Equal(s, e)
-	}
-}
-
 func checkSet(set Set[string]) bool {
 	for s := range set {
 		if s[0] == 't' {
@@ -44,51 +39,22 @@ func checkSet(set Set[string]) bool {
 	return false
 }
 
-func buildConnections(connections []Set[string]) map[string]Set[string] {
-	var res map[string]Set[string] = make(map[string]Set[string])
-	for _, connection := range connections {
-		var computers = SetToSlice(connection)
-
-		var _, ok1 = res[computers[0]]
-		if !ok1 {
-			res[computers[0]] = DefSet[string]()
-		}
-		var _, ok2 = res[computers[1]]
-		if !ok2 {
-			res[computers[1]] = DefSet[string]()
-		}
-		Add(res[computers[0]], computers[1])
-		Add(res[computers[1]], computers[0])
-	}
-	return res
-}
-
-func get3Network(input string) []Set[string] {
-	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	var connections = buildConnections(parse(lines))
-	var connected3 []Set[string]
-	for computer1, connected := range connections {
-		for computer2 := range connected {
-			for computer3 := range connected {
-				if In(connections[computer2], computer3) {
-					var inter = DefSet[string]()
-					Add(inter, computer1)
-					Add(inter, computer2)
-					Add(inter, computer3)
-					if !slices.ContainsFunc(connected3, funcEqual(inter)) {
-						connected3 = append(connected3, inter)
-					}
-				}
-			}
-		}
-	}
-	return connected3
-}
-
 func part1(input string) int {
-	var connected3 = get3Network(input)
+	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	var connections = parse(lines)
+	var vertices = DefSet[string]()
+	var edges = DefSet[Edge[string]]()
+	for _, connection := range connections {
+		vertices = Union(vertices, connection)
+		var edge = SetToSlice(connection)
+		Add(edges, Edge[string]{S1: edge[0], S2: edge[1]})
+	}
+	var graph = Graph[string]{Vertices: vertices, Edges: edges}
+	var newGraph, bijection = GraphToGraphInt(graph)
+	var clique3 = Find3Clique(newGraph)
+	var clique3String []Set[string] = buildSetFromBijection(clique3, bijection)
 	var res int
-	for _, set := range connected3 {
+	for _, set := range clique3String {
 		if checkSet(set) {
 			res++
 		}
@@ -96,61 +62,66 @@ func part1(input string) int {
 	return res
 }
 
-func part22(input string) string {
-	// var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	var connected3 = get3Network(input)
-	// var connections = buildConnections(parse(lines))
-	var nextConnected []Set[string]
-	fmt.Println("ready!!", len(connected3))
-	for i, c1 := range connected3 {
-		fmt.Println(i)
-		for _, c2 := range connected3 {
-			for _, c3 := range connected3 {
-				if len(Intersect(c1, Intersect(c2, c3))) == 1 && len(Union(c1, Union(c2, c3))) == 4 {
-					var add = Union(c1, Union(c2, c3))
-					if !slices.ContainsFunc(nextConnected, funcEqual(add)) {
-						nextConnected = append(nextConnected, add)
-					}
-
-				}
-			}
-		}
+func buildSliceFromBijection(slice []int, bijection []string) []string {
+	var res []string = make([]string, len(slice))
+	for j, i := range slice {
+		res[j] = bijection[i]
 	}
-	fmt.Println(nextConnected, len(nextConnected))
-	return "ui"
+	return res
 }
 
-func part2(input string) []string {
+func buildSetFromBijection(slice []Set[int], bijection []string) []Set[string] {
+	var res []Set[string] = make([]Set[string], len(slice))
+	for i, set := range slice {
+		res[i] = make(Set[string])
+		for j := range set {
+			Add(res[i], bijection[j])
+		}
+	}
+	return res
+}
+
+func initTab(n int) []int {
+	var res = make([]int, n)
+	for i := range n {
+		res[i] = i
+	}
+	return res
+}
+
+func part2(input string) string {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	var connections = parse(lines)
-	var computers = DefSet[string]()
+	var vertices = DefSet[string]()
+	var edges = DefSet[Edge[string]]()
 	for _, connection := range connections {
-		computers = Union(computers, connection)
+		vertices = Union(vertices, connection)
+		var edge = SetToSlice(connection)
+		Add(edges, Edge[string]{S1: edge[0], S2: edge[1]})
 	}
-	var connectedAll []string
-	fmt.Println("ui")
-	for computer := range computers {
-		var connected = DefSet[string]()
-		for _, connection := range connections {
-			if In(connection, computer) {
-				Add(connected, SetToSlice(Without(connection, computer))[0])
-			}
-		}
-		if Equal(connected, Without(computers, computer)) {
-			connectedAll = append(connectedAll, computer)
-		}
-		fmt.Println(computer, connected)
+	var graph = Graph[string]{Vertices: vertices, Edges: edges}
+	var newGraph, bijection = GraphToGraphInt(graph)
+	var graphMatrix = GraphIntToGraphMatrix(newGraph)
+	r := []int{}
+	x := []int{}
+	maxClique := []int{}
+	CliqueMaximum(graphMatrix, r, initTab(len(bijection)), x, &maxClique)
+	var maxCliqueString []string = buildSliceFromBijection(maxClique, bijection)
+	slices.Sort(maxCliqueString)
+	var res []byte
+	for _, s := range maxCliqueString {
+		res = append(res, []byte(s)...)
+		res = append(res, ',')
 	}
-	slices.Sort(connectedAll)
-	return connectedAll
+	return string(res[:len(res)-1])
 }
 
 func main() {
 	fmt.Println("--2024 day 23 solution--")
 	start := time.Now()
-	// fmt.Println("part1 : ", part1(input))
-	// fmt.Println(time.Since(start))
-	// start = time.Now()
-	fmt.Println("part2 : ", part22(input))
+	fmt.Println("part1 : ", part1(input))
+	fmt.Println(time.Since(start))
+	start = time.Now()
+	fmt.Println("part2 : ", part2(input))
 	fmt.Println(time.Since(start))
 }

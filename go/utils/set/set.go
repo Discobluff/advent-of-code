@@ -80,3 +80,7 @@ func Deprived[T comparable](s1 Set[T], s2 Set[T]) Set[T] {
 	}
 	return res
 }
+
+func IsEmpty[T comparable](s Set[T]) bool {
+	return len(s) == 0
+}

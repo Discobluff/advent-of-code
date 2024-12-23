@@ -115,37 +115,31 @@ func Find3Clique(graph GraphInt) []Set[int] {
 }
 
 // Algorithm of Bron-Kerbosch
-func CliqueMaximum(g *GraphMatrix, r, p, x []int, maxClique *[]int) {
+func CliqueMaximum(g GraphMatrix, r, p, x []int, maxClique *[]int) {
 	if len(p) == 0 && len(x) == 0 {
-		// R est une clique maximale
 		if len(r) > len(*maxClique) {
-			*maxClique = append([]int(nil), r...) // Mise à jour de la clique maximum trouvée
+			*maxClique = append([]int(nil), r...)
 		}
 		return
 	}
-
 	for i := 0; i < len(p); i++ {
 		v := p[i]
-		// Nouveaux ensembles pour l'appel récursif
 		newR := append(r, v)
 		newP := intersect(g, p, v)
 		newX := intersect(g, x, v)
-
 		CliqueMaximum(g, newR, newP, newX, maxClique)
-
-		// Déplacement de v de P à X
 		p = remove(p, v)
 		x = append(x, v)
 	}
 }
 
-func (g *GraphMatrix) IsConnected(v1, v2 int) bool {
-	return (*g)[v1][v2]
+func isConnected(g GraphMatrix, v1, v2 int) bool {
+	return g[v1][v2]
 }
-func intersect(g *GraphMatrix, vertices []int, v int) []int {
+func intersect(g GraphMatrix, vertices []int, v int) []int {
 	var result []int
 	for _, u := range vertices {
-		if g.IsConnected(v, u) {
+		if isConnected(g, v, u) {
 			result = append(result, u)
 		}
 	}
