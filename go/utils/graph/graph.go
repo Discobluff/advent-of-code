@@ -18,8 +18,8 @@ type Graph[T comparable] struct {
 }
 
 type GraphInt struct {
-	size  int
-	edges Set[Edge[int]]
+	Size  int
+	Edges Set[Edge[int]]
 }
 
 func getCorrespond[T comparable](vertices map[T]int) []T {
@@ -32,7 +32,7 @@ func getCorrespond[T comparable](vertices map[T]int) []T {
 
 func GraphToGraphInt[T comparable](graph Graph[T]) (GraphInt, []T) {
 	var res GraphInt
-	res.size = len(graph.Vertices)
+	res.Size = len(graph.Vertices)
 	var verticesMap map[T]int = make(map[T]int)
 	var index int
 	for vertice := range graph.Vertices {
@@ -43,16 +43,16 @@ func GraphToGraphInt[T comparable](graph Graph[T]) (GraphInt, []T) {
 	for edge := range graph.Edges {
 		Add(newEdges, Edge[int]{S1: verticesMap[edge.S1], S2: verticesMap[edge.S2]})
 	}
-	res.edges = newEdges
+	res.Edges = newEdges
 	return res, getCorrespond(verticesMap)
 }
 
 func GraphIntToGraphMatrix(graph GraphInt) GraphMatrix {
-	var matrix [][]bool = make([][]bool, graph.size)
-	for i := range graph.size {
-		matrix[i] = make([]bool, graph.size)
+	var matrix [][]bool = make([][]bool, graph.Size)
+	for i := range graph.Size {
+		matrix[i] = make([]bool, graph.Size)
 	}
-	for edge := range graph.edges {
+	for edge := range graph.Edges {
 		matrix[edge.S1][edge.S2] = true
 		matrix[edge.S2][edge.S1] = true
 	}
@@ -85,11 +85,11 @@ func funcEqual(s Set[int]) func(Set[int]) bool {
 
 // Algorithm from Chiba & Nishizeki
 func Find3Clique(graph GraphInt) []Set[int] {
-	var neighbors []Set[int] = make([]Set[int], graph.size)
+	var neighbors []Set[int] = make([]Set[int], graph.Size)
 	for i := range neighbors {
 		neighbors[i] = DefSet[int]()
 	}
-	for edge := range graph.edges {
+	for edge := range graph.Edges {
 		Add(neighbors[edge.S1], edge.S2)
 		Add(neighbors[edge.S2], edge.S1)
 	}
@@ -115,22 +115,37 @@ func Find3Clique(graph GraphInt) []Set[int] {
 }
 
 // Algorithm of Bron-Kerbosch
-func CliqueMaximum(g GraphMatrix, r, p, x []int, maxClique *[]int) {
-	if len(p) == 0 && len(x) == 0 {
-		if len(r) > len(*maxClique) {
-			*maxClique = append([]int(nil), r...)
+func bronKerbosch[T comparable](neighbors map[T]Set[T], clique Set[T], candidates Set[T], excluded Set[T], maxClique *Set[T]) {
+	if IsEmpty(candidates) && IsEmpty(excluded) {
+		if len(clique) > len(*maxClique) {
+			*maxClique = clique
 		}
 		return
 	}
-	for i := 0; i < len(p); i++ {
-		v := p[i]
-		newR := append(r, v)
-		newP := intersect(g, p, v)
-		newX := intersect(g, x, v)
-		CliqueMaximum(g, newR, newP, newX, maxClique)
-		p = remove(p, v)
-		x = append(x, v)
+	for v := range candidates {
+		var setV = DefSet[T]()
+		Add(setV, v)
+		bronKerbosch(neighbors, Union(clique, setV), Intersect(candidates, neighbors[v]), Intersect(excluded, neighbors[v]), maxClique)
+		Remove(candidates, v)
+		Add(excluded, v)
 	}
+}
+
+func CliqueMaximum[T comparable](graph Graph[T]) Set[T] {
+	var neighbors map[T]Set[T] = make(map[T]Set[T])
+	for vertice := range graph.Vertices {
+		neighbors[vertice] = DefSet[T]()
+	}
+	for edge := range graph.Edges {
+		Add(neighbors[edge.S1], edge.S2)
+		Add(neighbors[edge.S2], edge.S1)
+	}
+	var clique = DefSet[T]()
+	var excluded = DefSet[T]()
+	var candidates = Union(graph.Vertices, DefSet[T]())
+	var res = DefSet[T]()
+	bronKerbosch(neighbors, clique, candidates, excluded, &res)
+	return res
 }
 
 func isConnected(g GraphMatrix, v1, v2 int) bool {

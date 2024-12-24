@@ -81,10 +81,10 @@ func buildSetFromBijection(slice []Set[int], bijection []string) []Set[string] {
 	return res
 }
 
-func initTab(n int) []int {
-	var res = make([]int, n)
+func initTab(n int) Set[int] {
+	var res = DefSet[int]()
 	for i := range n {
-		res[i] = i
+		Add(res, i)
 	}
 	return res
 }
@@ -100,13 +100,7 @@ func part2(input string) string {
 		Add(edges, Edge[string]{S1: edge[0], S2: edge[1]})
 	}
 	var graph = Graph[string]{Vertices: vertices, Edges: edges}
-	var newGraph, bijection = GraphToGraphInt(graph)
-	var graphMatrix = GraphIntToGraphMatrix(newGraph)
-	r := []int{}
-	x := []int{}
-	maxClique := []int{}
-	CliqueMaximum(graphMatrix, r, initTab(len(bijection)), x, &maxClique)
-	var maxCliqueString []string = buildSliceFromBijection(maxClique, bijection)
+	var maxCliqueString = SetToSlice(CliqueMaximum(graph))
 	slices.Sort(maxCliqueString)
 	var res []byte
 	for _, s := range maxCliqueString {
