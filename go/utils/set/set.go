@@ -31,6 +31,21 @@ func Without[T comparable](s Set[T], e T) Set[T] {
 	return Deprived(s, newS)
 }
 
+func Max[T comparable](s Set[T], f func(T, T) bool) (T, bool) {
+	var res T
+	if IsEmpty(s) {
+		return res, false
+	}
+	var found bool
+	for elem := range s {
+		if !found || f(res, elem) {
+			found = true
+			res = elem
+		}
+	}
+	return res, true
+}
+
 func SetToSlice[T comparable](s Set[T]) []T {
 	var res []T = make([]T, len(s))
 	var index int

@@ -29,7 +29,7 @@ func Dijkstra[T comparable](start T, neighbors func(T) map[T]int) map[T]int {
 	var nexts = DefQueue[T]()
 	AddQueue(&nexts, start, cmpDijkstra(scores))
 	var visited Set[T] = DefSet[T]()
-	for !IsEmpty(nexts) {
+	for !IsEmptyQueue(nexts) {
 		var next = PopQueue(&nexts)
 		if !In(visited, next) {
 			Add(visited, next)
@@ -58,7 +58,7 @@ func AStar[T comparable](start T, end T, funcHeuristic func(T) int, neighbors fu
 	var nexts = DefQueue[T]()
 	AddQueue(&nexts, start, cmpAStar(scores, score, heuristic))
 	var visited Set[T] = DefSet[T]()
-	for !IsEmpty(nexts) && !In(visited, end) {
+	for !IsEmptyQueue(nexts) && !In(visited, end) {
 		var next = PopQueue(&nexts)
 		if !In(visited, next) {
 			Add(visited, next)

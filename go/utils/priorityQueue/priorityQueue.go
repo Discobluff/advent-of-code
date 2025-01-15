@@ -9,7 +9,7 @@ func DefQueue[T any]() pQueue[T] {
 	return res
 }
 
-func IsEmpty[T any](queue pQueue[T]) bool {
+func IsEmptyQueue[T any](queue pQueue[T]) bool {
 	return len(queue) == 0
 }
 
