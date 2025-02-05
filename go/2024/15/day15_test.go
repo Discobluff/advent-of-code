@@ -6,15 +6,6 @@ import (
 	"testing"
 )
 
-//go:embed input.txt
-var inputDay string
-
-//go:embed test1.txt
-var input1 string
-
-//go:embed test2.txt
-var input2 string
-
 func getInput(path string) string {
 	data, _ := os.ReadFile(path)
 	return string(data)
