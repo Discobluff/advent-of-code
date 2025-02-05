@@ -33,5 +33,4 @@ createDay.go
 createDay
 
 #Inputs files
-input.txt
-test*.txt
+*.txt
