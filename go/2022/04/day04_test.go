@@ -12,16 +12,16 @@ func getInput(path string) string {
 }
 
 func TestPart1Input(t *testing.T) {
-	result := part1(getInput("inputs/2022/03"))
-	expected := 8233
+	result := part1(getInput("inputs/2022/04"))
+	expected := 515
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
 	}
 }
 
 func TestPart2Input(t *testing.T) {
-	result := part2(getInput("inputs/2022/03"))
-	expected := 2821
+	result := part2(getInput("inputs/2022/04"))
+	expected := 883
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
 	}
