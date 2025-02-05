@@ -2,15 +2,18 @@ package main
 
 import (
 	_ "embed"
+	"os"
 	"strings"
 	"testing"
 )
 
-//go:embed input.txt
-var inputDay string
+func getInput(path string) string {
+	data, _ := os.ReadFile(path)
+	return string(data)
+}
 
 func TestPart1Input(t *testing.T) {
-	result := part1(inputDay)
+	result := part1(getInput("inputs/2024/06/input.txt"))
 	expected := 5030
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
@@ -18,7 +21,7 @@ func TestPart1Input(t *testing.T) {
 }
 
 func TestPart2Input(t *testing.T) {
-	result := part2(inputDay)
+	result := part2(getInput("inputs/2024/06/input.txt"))
 	expected := 1928
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
@@ -26,7 +29,7 @@ func TestPart2Input(t *testing.T) {
 }
 
 func TestSearchStart(t *testing.T) {
-	x, y := searchStart(strings.Split(strings.TrimSuffix(input, "\n"), "\n"), '^')
+	x, y := searchStart(strings.Split(strings.TrimSuffix(getInput("inputs/2024/06/input.txt"), "\n"), "\n"), '^')
 	expectedX, expectedY := 65, 85
 	if x != expectedX || y != expectedY {
 		t.Errorf("Result is incorrect, got: %d,%d, want: %d,%d.", x, y, expectedX, expectedY)
