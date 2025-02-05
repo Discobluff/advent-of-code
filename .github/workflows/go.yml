@@ -22,6 +22,10 @@ jobs:
       - name: Install dependencies
         working-directory: go
         run: go mod tidy
+        
+      - name: Clone private input repo
+        run: |
+          git clone https://x-access-token:${{ secrets.AOC_INPUTS }}@github.com/Discobluff/advent-of-code-inputs.git inputs
 
       - name: Run tests
         working-directory: go
@@ -30,3 +34,4 @@ jobs:
       - name: Run build
         working-directory: go
         run: go build -v ./...
+
