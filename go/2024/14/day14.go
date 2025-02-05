@@ -116,7 +116,7 @@ func part2(input string) int {
 		res++
 		move(&robots, height, length)
 	}
-	displayRobots(robots, length, height)
+	// displayRobots(robots, length, height)
 	return res
 }
 
