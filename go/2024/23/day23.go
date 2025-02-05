@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 	"time"
@@ -10,9 +11,6 @@ import (
 	. "github.com/Discobluff/advent-of-code/go/utils/graph"
 	. "github.com/Discobluff/advent-of-code/go/utils/set"
 )
-
-//go:embed input.txt
-var input string
 
 func parseLine(line string) Set[string] {
 	var res = DefSet[string]()
@@ -111,11 +109,12 @@ func part2(input string) string {
 }
 
 func main() {
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 23 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(input))
+	fmt.Println("part2 : ", part2(string(input)))
 	fmt.Println(time.Since(start))
 }

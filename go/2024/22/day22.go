@@ -3,14 +3,12 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
 )
-
-//go:embed input.txt
-var input string
 
 func mix(value int, secret int) int {
 	return value ^ secret
@@ -90,11 +88,12 @@ func part2(input string) int {
 }
 
 func main() {
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 22 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(input))
+	fmt.Println("part2 : ", part2(string(input)))
 	fmt.Println(time.Since(start))
 }

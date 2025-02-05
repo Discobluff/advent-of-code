@@ -14,9 +14,6 @@ import (
 	. "github.com/Discobluff/advent-of-code/go/utils/set"
 )
 
-//go:embed input.txt
-var input string
-
 type Connection struct {
 	wire1, wire2, output, gate string
 }
@@ -264,12 +261,13 @@ func createDot(input string) {
 }
 
 func main() {
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 24 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
 	for range 10 {
-		part2(input)
+		part2(string(input))
 	}
 	// createDot(input)
 }

@@ -3,19 +3,20 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
+	// . "github.com/Discobluff/advent-of-code/go/utils/slice"
 )
-
-//go:embed input.txt
-var input string
 
 type Path struct {
 	Position
-	path []byte
+	path      []byte
+	changeDir int
 }
 
 var keypad map[byte]Position = map[byte]Position{'7': DefPosition(0, 0), '8': DefPosition(0, 1), '9': DefPosition(0, 2), '4': DefPosition(1, 0), '5': DefPosition(1, 1), '6': DefPosition(1, 2), '1': DefPosition(2, 0), '2': DefPosition(2, 1), '3': DefPosition(2, 2), ' ': DefPosition(3, 0), '0': DefPosition(3, 1), 'A': DefPosition(3, 2)}
@@ -32,14 +33,16 @@ func copyPath(path []byte) []byte {
 func copyPaths(tab []Path) []Path {
 	var res []Path = make([]Path, len(tab))
 	for i, t := range tab {
-		res[i] = Path{Position: t.Position, path: copyPath(t.path)}
+		res[i] = Path{Position: t.Position, changeDir: t.changeDir, path: copyPath(t.path)}
 	}
 	return res
 }
 
-func pathsKeyPad(start Position, end Position, gap Position) [][]byte {
+func nextPath(pad map[byte]Position, startB byte, endB byte) []byte {
 	var paths []Path
-	paths = append(paths, Path{Position: start, path: []byte{}})
+	var start Position = pad[startB]
+	var end Position = pad[endB]
+	paths = append(paths, Path{Position: start, changeDir: 0, path: []byte{}})
 	var res [][]byte
 	for len(paths) > 0 {
 		var newPaths []Path = make([]Path, 0)
@@ -49,59 +52,37 @@ func pathsKeyPad(start Position, end Position, gap Position) [][]byte {
 			} else {
 				for dir, posDir := range Directions {
 					var newPos = AddPositions(path.Position, posDir)
-					if newPos != gap && Distance(newPos, end) < Distance(path.Position, end) {
-						newPaths = append(newPaths, Path{Position: newPos, path: append(path.path, dir)})
+					if (len(path.path) == 0 || dir == path.path[len(path.path)-1] || path.changeDir < 2) && newPos != pad[' '] && Distance(newPos, end) < Distance(path.Position, end) {
+						if len(path.path) > 0 && dir == path.path[len(path.path)-1] {
+							newPaths = append(newPaths, Path{Position: newPos, changeDir: path.changeDir, path: append(path.path, dir)})
+						} else {
+							newPaths = append(newPaths, Path{Position: newPos, changeDir: path.changeDir + 1, path: append(path.path, dir)})
+						}
 					}
 				}
+
 			}
 		}
 		paths = copyPaths(newPaths)
 	}
-	return res
-}
+	if len(res) == 1 {
+		return res[0]
+	}
+	var ordre = []byte{'<', '^', 'v', '>'}
+	if slices.Index(ordre, res[0][0]) < slices.Index(ordre, res[0][1]) {
+		return res[0]
+	}
+	return res[1]
 
-func cartesianProduct(t1 [][]byte, t2 [][]byte) [][]byte {
-	if len(t1) == 0 {
-		return t2
-	}
-	var res [][]byte = make([][]byte, len(t1)*len(t2))
-	var index int
-	for _, b1 := range t1 {
-		for _, b2 := range t2 {
-			res[index] = append(b1, b2...)
-			index++
-		}
-	}
-	return res
-}
+	// var ordre = []byte{'^', '>', 'v', '<'}
+	// if res[0][0] == res[1][0] {
+	// 	fmt.Println(res)
+	// }
+	// if Distance(directionalpad[res[0][0]], directionalpad['A']) < Distance(directionalpad[res[1][0]], directionalpad['A']) {
+	// 	return res[0]
+	// }
+	// return res[1]
 
-func displayPath(path [][]byte) {
-	for _, p := range path {
-		fmt.Printf("%s\n", p)
-	}
-}
-
-func deepCopy(t [][]byte) [][]byte {
-	var res = make([][]byte, len(t))
-	for i, b := range t {
-		res[i] = copyPath(b)
-	}
-	return res
-}
-
-func lenMini(t [][]byte) (int, int) {
-	var res int = -1
-	var count int = 0
-	for _, path := range t {
-		if len(path) == res {
-			count++
-		}
-		if res == -1 || len(path) < res {
-			res = len(path)
-			count = 1
-		}
-	}
-	return res, count
 }
 
 func complexity(s string) int {
@@ -109,45 +90,73 @@ func complexity(s string) int {
 	return res
 }
 
-func part1(input string) int {
-	var res int
-	var codes = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	var pads []map[byte]Position = []map[byte]Position{keypad, directionalpad, directionalpad}
-	for _, code := range codes {
-		var paths [][]byte
-		paths = append(paths, []byte(code))
-		for i := range 3 {
-			var pathKeyPad [][]byte
-			for _, path := range paths {
-				var start Position = pads[i]['A']
-				var path2 [][]byte
-				for _, digit := range path {
-					path2 = deepCopy(cartesianProduct(path2, pathsKeyPad(start, pads[i][byte(digit)], pads[i][' '])))
-					start = pads[i][byte(digit)]
-				}
-				pathKeyPad = append(pathKeyPad, path2...)
-			}
-			paths = deepCopy(pathKeyPad)
-			paths = pathKeyPad
+func solve(code map[string]int, robots int, pad map[byte]Position) map[string]int {
+	if robots == 0 {
+		return code
+	}
+	var codeMap map[string]int = make(map[string]int)
+	for char, count := range code {
+		var start = byte('A')
+		for _, c := range char {
+			var path = nextPath(pad, byte(start), byte(c))
+			start = byte(c)
+			codeMap[string(path)] += count
 		}
-		var m, _ = lenMini(paths)
-		res += m * complexity(code)
+	}
+	return solve(codeMap, robots-1, directionalpad)
+}
+
+func length(code map[string]int) int {
+	var res int
+	for c, count := range code {
+		res += len(c) * count
 	}
 	return res
 }
 
-// func part2(input string) int {
-// 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-// 	var res int
-// 	return res
-// }
+func build(s string) map[string]int {
+	var res map[string]int = make(map[string]int)
+	var split = strings.Split(s, "A")
+	for _, spl := range split {
+		res[spl+"A"] += 1
+	}
+	return res
+
+}
+
+func part1(input string) int {
+	var codes = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	var res int
+	var robots int = 3
+	for _, code := range codes {
+		var codeMap map[string]int = make(map[string]int)
+		codeMap[code] = 1
+		var path = solve(codeMap, robots, keypad)
+		res += length(path) * complexity(code)
+	}
+	return res
+}
+
+func part2(input string) int {
+	var codes = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	var res int
+	var robots int = 26
+	for _, code := range codes {
+		var codeMap map[string]int = make(map[string]int)
+		codeMap[code] = 1
+		var path = solve(codeMap, robots, keypad)
+		res += length(path) * complexity(code)
+	}
+	return res
+}
 
 func main() {
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 21 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
-	// start = time.Now()
-	// fmt.Println("part2 : ", part2(input))
-	// fmt.Println(time.Since(start))
+	start = time.Now()
+	fmt.Println("part2 : ", part2(string(input)))
+	fmt.Println(time.Since(start))
 }

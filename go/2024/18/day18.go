@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -11,9 +12,6 @@ import (
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
 	. "github.com/Discobluff/advent-of-code/go/utils/search"
 )
-
-//go:embed input.txt
-var input string
 
 func parse(line string) Position {
 	var numbers = strings.Split(line, ",")
@@ -118,11 +116,12 @@ func part2(input string) string {
 }
 
 func main() {
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 18 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(input))
+	fmt.Println("part2 : ", part2(string(input)))
 	fmt.Println(time.Since(start))
 }
