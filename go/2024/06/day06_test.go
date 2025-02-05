@@ -29,7 +29,7 @@ func TestPart2Input(t *testing.T) {
 }
 
 func TestSearchStart(t *testing.T) {
-	x, y := searchStart(strings.Split(strings.TrimSuffix(getInput("inputs/2024/06/input.txt"), "\n"), "\n"), '^')
+	x, y := searchStart(strings.Split(strings.TrimSuffix(getInput("../../../inputs/2024/06/input.txt"), "\n"), "\n"), '^')
 	expectedX, expectedY := 65, 85
 	if x != expectedX || y != expectedY {
 		t.Errorf("Result is incorrect, got: %d,%d, want: %d,%d.", x, y, expectedX, expectedY)
