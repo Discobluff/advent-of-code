@@ -4,13 +4,11 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
-
-//go:embed input.txt
-var input string
 
 func countDigits(number int) int {
 	var res int = 1
@@ -69,12 +67,12 @@ func part2(input string) int {
 }
 
 func main() {
-	// var s = string(500)
+	input, _ := os.ReadFile("input.txt")
 	fmt.Println("--2024 day 07 solution--")
 	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
+	fmt.Println("part1 : ", part1(string(input)))
 	fmt.Println(time.Since(start))
 	start = time.Now()
-	fmt.Println("part2 : ", part2(input))
+	fmt.Println("part2 : ", part2(string(input)))
 	fmt.Println(time.Since(start))
 }
