@@ -3,12 +3,10 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 )
-
-//go:embed input.txt
-var input string
 
 func searchLine(line string) int {
 	var res int
@@ -79,7 +77,8 @@ func part2(lines []string) int {
 }
 
 func main() {
-	var input = strings.TrimSuffix(input, "\n")
+	input1, _ := os.ReadFile("input.txt")
+	var input = strings.TrimSuffix(string(input1), "\n")
 	var lines = strings.Split(input, "\n")
 	fmt.Println("--2024 day 03 solution--")
 	start := time.Now()
