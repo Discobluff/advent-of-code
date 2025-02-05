@@ -12,7 +12,7 @@ func getInput(path string) string {
 }
 
 func TestPart1Input(t *testing.T) {
-	result := part1(getInput("inputs/2024/14/input.txt"))
+	result := part1(getInput("../../../inputs/2024/14/input.txt"))
 	expected := 233709840
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
@@ -20,7 +20,7 @@ func TestPart1Input(t *testing.T) {
 }
 
 func TestPart1Input1(t *testing.T) {
-	result := part1(getInput("inputs/2024/14/test.txt"))
+	result := part1(getInput("../../../inputs/2024/14/test.txt"))
 	expected := 12
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
@@ -28,7 +28,7 @@ func TestPart1Input1(t *testing.T) {
 }
 
 func TestPart2Input(t *testing.T) {
-	result := part2(getInput("inputs/2024/14/input.txt"))
+	result := part2(getInput("../../../inputs/2024/14/input.txt"))
 	expected := 6620
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)

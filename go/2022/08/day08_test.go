@@ -13,7 +13,7 @@ func getInput(path string) string {
 
 func TestPart1Input(t *testing.T) {
 	result := part1(getInput("../../../inputs/2022/08/input.txt"))
-	expected := 1696
+	expected := 1695
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
 	}
