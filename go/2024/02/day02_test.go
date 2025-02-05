@@ -20,7 +20,7 @@ func TestPart1Input(t *testing.T) {
 }
 
 func TestPart1Input1(t *testing.T) {
-	result := part1(getInput("../../../inputs/2024/01/test.txt"))
+	result := part1(getInput("../../../inputs/2024/02/test.txt"))
 	expected := 2
 	if result != expected {
 		t.Errorf("Result is incorrect, got: %d, want: %d.", result, expected)
