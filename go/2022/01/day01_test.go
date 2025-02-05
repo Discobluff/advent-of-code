@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 	"os"
 	"testing"
 )
@@ -12,8 +11,6 @@ func getInput(path string) string {
 	return string(data)
 }
 func TestPart1Input(t *testing.T) {
-	fmt.Println("ui")
-	fmt.Println(getInput("../../../inputs/2022/01/input.txt"))
 	result := part1(getInput("../../../inputs/2022/01/input.txt"))
 	expected := 74394
 	if result != expected {
