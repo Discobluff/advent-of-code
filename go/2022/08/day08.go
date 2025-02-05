@@ -2,16 +2,11 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	. "github.com/Discobluff/advent-of-code/go/utils/positions"
 )
-
-//go:embed test.txt
-var input string
 
 func parse(lines []string) [][]int {
 	var res [][]int = make([][]int, len(lines))
@@ -86,14 +81,4 @@ func part1(input string) int {
 func part2(input string) int {
 	var lines = strings.Split(strings.TrimSuffix(input, "\n"), "\n")
 	return solve2(parse(lines))
-}
-
-func main() {
-	fmt.Println("--2022 day 08 solution--")
-	start := time.Now()
-	fmt.Println("part1 : ", part1(input))
-	fmt.Println(time.Since(start))
-	start = time.Now()
-	fmt.Println("part2 : ", part2(input))
-	fmt.Println(time.Since(start))
 }
