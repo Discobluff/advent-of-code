@@ -73,3 +73,38 @@ func AStar[T comparable](start T, end T, funcHeuristic func(T) int, neighbors fu
 	}
 	return scores
 }
+
+func cmpBFS[T any](t1 T, t2 T) bool {
+	return true
+}
+
+func cmpDFS[T any](t1, t2 T) bool {
+	return false
+}
+
+func search[T comparable](start T, neighbors func(T) Set[T], typeSearch func(T, T) bool) Set[T] {
+	var nexts = DefQueue[T]()
+	var visited = DefSet[T]()
+	AddQueue(&nexts, start, typeSearch)
+	for !IsEmptyQueue(nexts) {
+		var elem = PopQueue(&nexts)
+		if !In(visited, elem) {
+			Add(visited, elem)
+			var neigh = neighbors(elem)
+			for n := range neigh {
+				if !In(visited, n) {
+					AddQueue(&nexts, n, typeSearch)
+				}
+			}
+		}
+	}
+	return visited
+}
+
+func BFS[T comparable](start T, neighbors func(T) Set[T]) Set[T] {
+	return search(start, neighbors, cmpBFS)
+}
+
+func DFS[T comparable](start T, neighbors func(T) Set[T]) Set[T] {
+	return search(start, neighbors, cmpDFS)
+}
