@@ -1,8 +1,7 @@
 #include "parse.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 
-char *read(const char* path){
+char *parseFile(const char* path){
     FILE* file = fopen(path, "r");
     if (!file) {
         perror("Error opening file");
@@ -25,4 +24,54 @@ char *read(const char* path){
 
     fclose(file);
     return content;
+}
+
+char **splitFile(const char* path, char charSplit, int* size){
+    char *file = parseFile(path);    
+    if (file == NULL){        
+        return NULL;
+    }
+    int countLines = 1;
+    for (int i=0;file[i]!='\0';i++){
+        if (file[i] == charSplit){
+            countLines++;
+        }
+    }
+    char **res = (char**)malloc(sizeof(char*)*countLines);    
+    int indexLine = 0;
+    int indexChar = 0;
+    while(file[indexChar] != '\0'){
+        int sizeSequence = 0;
+        while (file[indexChar+sizeSequence] != '\0' && file[indexChar+sizeSequence] != charSplit){
+            sizeSequence++;
+        }
+        res[indexLine] = (char*)malloc(sizeof(char)*(sizeSequence+1));
+        int indexCurrentLine = 0;
+        while (file[indexChar] != '\0' && file[indexChar] != charSplit){            
+            res[indexLine][indexCurrentLine] = file[indexChar];
+            indexChar++;
+            indexCurrentLine++;
+        }        
+        res[indexLine][indexCurrentLine] = '\0';
+        indexChar++;
+        indexLine++;
+    }
+    *size = countLines;    
+    return res;
+
+}
+
+int *atoiArray(char **array, int size){
+    int *res = (int*)malloc(sizeof(int)*size);
+    for (int i=0;i<size;i++){
+        res[i] = atoi(array[i]);
+    }
+    return res;
+}
+
+int *splitFileToI(const char* path, char charSplit, int *size){
+    char **lines = splitFile(path, charSplit, size);    
+    int *res = atoiArray(lines, *size);
+    free(lines);
+    return res;
 }
