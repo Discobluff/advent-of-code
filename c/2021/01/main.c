@@ -15,7 +15,19 @@ int part1(void){
 }
 
 int part2(void){
-    return 0;
+    int size;
+    int *numbers = splitFileToI("2021/01/input.txt",'\n',&size);
+    int res = 0;
+    int sum = numbers[0] + numbers[1] + numbers[2];
+    for (int i=3;i<size;i++){        
+        int sumTemp = sum - numbers[i-3] + numbers[i];
+        if (sumTemp > sum){
+            res++;
+        }
+        sum = sumTemp;
+    }    
+    free(numbers);
+    return res;
 }
 
 int main(void){
