@@ -3,7 +3,7 @@
 
 int part1(void){
     int size;
-    int *numbers = splitFileToI("2021/01/input.txt",'\n',&size);
+    int *numbers = splitFileToI("2021/01/input.txt",'\n',&size, true);
     int res = 0;
     for (int i=1;i<size;i++){
         if (numbers[i] >= numbers[i-1]){            
@@ -16,7 +16,7 @@ int part1(void){
 
 int part2(void){
     int size;
-    int *numbers = splitFileToI("2021/01/input.txt",'\n',&size);
+    int *numbers = splitFileToI("2021/01/input.txt",'\n',&size, true);
     int res = 0;
     int sum = numbers[0] + numbers[1] + numbers[2];
     for (int i=3;i<size;i++){        
