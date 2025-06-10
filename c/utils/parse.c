@@ -26,9 +26,9 @@ char *parseFile(const char* path){
     return content;
 }
 
-char **splitFile(const char* path, char charSplit, int* size){
-    char *file = parseFile(path);    
-    if (file == NULL){        
+char **splitFile(const char* path, char charSplit, int* size, bool ignoreEnd){
+    char *file = parseFile(path);
+    if (file == NULL){
         return NULL;
     }
     int countLines = 1;
@@ -37,10 +37,17 @@ char **splitFile(const char* path, char charSplit, int* size){
             countLines++;
         }
     }
-    char **res = (char**)malloc(sizeof(char*)*countLines);    
+    if (ignoreEnd){
+        int countEnd = 0;
+        while (strlen(file)-countEnd-1 >= 0 && file[strlen(file)-countEnd-1] == charSplit){
+            countEnd++;
+            countLines --;
+        }
+    }
+    char **res = (char**)malloc(sizeof(char*)*countLines);
     int indexLine = 0;
     int indexChar = 0;
-    while(file[indexChar] != '\0'){
+    while(indexLine < countLines){
         int sizeSequence = 0;
         while (file[indexChar+sizeSequence] != '\0' && file[indexChar+sizeSequence] != charSplit){
             sizeSequence++;
@@ -69,8 +76,8 @@ int *atoiArray(char **array, int size){
     return res;
 }
 
-int *splitFileToI(const char* path, char charSplit, int *size){
-    char **lines = splitFile(path, charSplit, size);    
+int *splitFileToI(const char* path, char charSplit, int *size, bool ignoreEnd){
+    char **lines = splitFile(path, charSplit, size, ignoreEnd);    
     int *res = atoiArray(lines, *size);
     free(lines);
     return res;
