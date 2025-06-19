@@ -16,10 +16,10 @@ OLIBSTEST = -I /cunit/CUnit
 	@$(CC) $(CFLAGS) -o $@ $^
 
 %/test.o: %/test.c
-	@$(CC) $(CFLAGS) -o $@ -c $^ $(OLIBS)
+	@$(CC) $(CFLAGS) -o $@ -c $^ $(OLIBSTEST)
 
 %/test: ../utils/parse.o %/test.o %/day.o
-	@$(CC) $(CFLAGS) -o $@ $^ -lcunit $(LIBS)
+	@$(CC) $(CFLAGS) -o $@ $^ -lcunit $(LIBSTEST)
 
 .SILENT:
 run%: %/main
