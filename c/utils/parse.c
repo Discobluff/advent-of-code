@@ -26,11 +26,7 @@ char *parseFile(const char* path){
     return content;
 }
 
-char **splitFile(const char* path, char charSplit, int* size, bool ignoreEnd){
-    char *file = parseFile(path);
-    if (file == NULL){
-        return NULL;
-    }
+char **splitString(char *file, char charSplit, int *size, bool ignoreEnd){
     int countLines = 1;
     for (int i=0;file[i]!='\0';i++){
         if (file[i] == charSplit){
@@ -65,6 +61,14 @@ char **splitFile(const char* path, char charSplit, int* size, bool ignoreEnd){
     }
     *size = countLines;    
     return res;
+}
+
+char **splitFile(const char* path, char charSplit, int* size, bool ignoreEnd){
+    char *file = parseFile(path);
+    if (file == NULL){
+        return NULL;
+    }
+    return splitString(file, charSplit, size, ignoreEnd);
 
 }
 
