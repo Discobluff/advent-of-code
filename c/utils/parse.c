@@ -68,8 +68,9 @@ char **splitFile(const char* path, char charSplit, int* size, bool ignoreEnd){
     if (file == NULL){
         return NULL;
     }
-    return splitString(file, charSplit, size, ignoreEnd);
-
+    char **res = splitString(file, charSplit, size, ignoreEnd);
+    free(file);
+    return res;
 }
 
 int *atoiArray(char **array, int size){
@@ -80,9 +81,16 @@ int *atoiArray(char **array, int size){
     return res;
 }
 
+void freeLines(char **lines, int size){
+    for (int i=0;i<size;i++){
+        free(lines[i]);
+    }
+    free(lines);
+}
+
 int *splitFileToI(const char* path, char charSplit, int *size, bool ignoreEnd){
     char **lines = splitFile(path, charSplit, size, ignoreEnd);    
     int *res = atoiArray(lines, *size);
-    free(lines);
+    freeLines(lines,*size);
     return res;
 }

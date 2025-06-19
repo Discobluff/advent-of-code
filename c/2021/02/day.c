@@ -20,7 +20,7 @@ int part1(const char *path){
             depth += command;
         }
     }
-    free(instructions);
+    freeLines(instructions,size);
     return abs*depth;
 }
 
@@ -45,6 +45,6 @@ int part2(const char *path){
             aim += command;
         }
     }
-    free(instructions);
+    freeLines(instructions,size);
     return abs*depth;
 }

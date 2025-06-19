@@ -26,7 +26,7 @@ int part1(const char *path){
         n1 = 2*n1+bit;
         n2 = 2*n2+1-bit;
     }    
-    free(numbers);
+    freeLines(numbers, size);
     return n1*n2;
 }
 
@@ -103,7 +103,7 @@ int part2(const char *path){
             break;
         }
     }
-    free(numbers);
+    freeLines(numbers,size);
     free(bits1);
     free(bits2);    
     return n1*n2;

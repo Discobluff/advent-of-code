@@ -116,8 +116,19 @@ int part1(const char* path){
             }
         }
     }    
-    // free(numbers);
-    // free(lines);
+    free(numbers);
+    freeLines(lines,size);
+    freeLines(numbersString,countNumbers);
+    for (int i=0;i<countNumbers;i++){
+        for (int j=0;j<sizeGrid;j++){
+            free(grids[i][j]);
+            free(seen[i][j]);
+        }
+        free(grids[i]);
+        free(seen[i]);
+    }
+    free(grids);
+    free(seen);
     return res;
 }
 
@@ -159,7 +170,18 @@ int part2(const char* path){
             break;
         }
     }    
-    // free(numbers);
-    // free(lines);
+    free(numbers);
+    freeLines(lines,size);
+    freeLines(numbersString,countNumbers);
+    for (int i=0;i<countNumbers;i++){
+        for (int j=0;j<sizeGrid;j++){
+            free(grids[i][j]);
+            free(seen[i][j]);
+        }
+        free(grids[i]);
+        free(seen[i]);
+    }
+    free(grids);
+    free(seen);
     return res;
 }

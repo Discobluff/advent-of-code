@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra -Wpedantic -std=c99 #-fsanitize=address -g
+CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -fsanitize=address -g
 
 ../utils/%.o: ../utils/%.c
 	@$(CC) $(CFLAGS) -c $^ -o $@
@@ -28,3 +28,24 @@ test%: %/test
 
 clean:
 	@rm -rf main *.o
+
+MAKEFLAGS += --no-print-directory
+
+run:
+	for dir in $(shell find . -type d); do \
+	if [ "$$dir" = "." ]; then continue; fi; \
+		day=$$(basename $$dir); \
+		echo "2021 Day $$day"; \
+		make run$$day; \
+		echo ""; \
+	done
+
+test:
+	for dir in $(shell find . -type d); do \
+	if [ "$$dir" = "." ]; then continue; fi; \
+		day=$$(basename $$dir); \
+		echo "2021 Day $$day"; \
+		make test$$day; \
+		echo ""; \
+	done
+
