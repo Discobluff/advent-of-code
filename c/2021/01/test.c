@@ -1,5 +1,5 @@
 #include "day.h"
-#include "/cunit/CUnit/CUnit/CUnitCI.h"
+#include "/cunit/CUnit/CUnit/Basic.h"
 
 void test1Input(void){
     int res = 1655;
