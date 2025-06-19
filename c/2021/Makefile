@@ -1,5 +1,7 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -fsanitize=address -g
+LIBSTEST = -L /cunit/CUnit -lcunit
+OLIBSTEST = -I /cunit/CUnit
 
 ../utils/%.o: ../utils/%.c
 	@$(CC) $(CFLAGS) -c $^ -o $@
@@ -14,10 +16,10 @@ CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -fsanitize=address -g
 	@$(CC) $(CFLAGS) -o $@ $^
 
 %/test.o: %/test.c
-	@$(CC) $(CFLAGS) -o $@ -c $^
+	@$(CC) $(CFLAGS) -o $@ -c $^ $(OLIBS)
 
 %/test: ../utils/parse.o %/test.o %/day.o
-	@$(CC) $(CFLAGS) -o $@ $^ -lcunit
+	@$(CC) $(CFLAGS) -o $@ $^ -lcunit $(LIBS)
 
 .SILENT:
 run%: %/main
