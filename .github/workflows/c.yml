@@ -1,0 +1,29 @@
+name: Tests C
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/discobluff/docker_aoc:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Clone code
+      run: git clone https://github.com/Discobluff/advent-of-code.git
+
+    - name: Change directory
+      run: cd advent-of-code/c/2021
+
+    - name: Run test
+      run: make test01
