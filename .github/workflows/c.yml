@@ -18,24 +18,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: pwd
-      run: pwd
-
-    - name: ls
-      run: ls
-
-    - name: Clone code
-      run: git clone https://github.com/Discobluff/advent-of-code.git      
-
+      
     - name: Change directory
-      run: cd advent-of-code/c/2021
+      run: cd c/2021
     
     - name: pwd
       run: pwd
 
     - name: ls
       run: ls
+
+    - name: cat mf
+      run: cat Makefile
 
     - name: Run test
       run: make test01
