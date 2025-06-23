@@ -26,13 +26,15 @@ jobs:
       run: |
         for year_path in inputs/*; do
           if [ -d "$year_path" ]; then
-          year=$(basename "$year_path")
-        for day_path in "$year_path"/*; do
-          if [ -d "$day_path" ]; then
-            day=$(basename "$day_path")
-            cp "$day_path/input.txt" "c/$year/$day/input.txt"
-          fi
-        done
+            year=$(basename "$year_path")
+            for day_path in "$year_path"/*; do
+              if [ -d "$day_path" ]; then
+                day=$(basename "$day_path")
+                if [ -d "c/$year/$day" ]; then
+                  cp "$day_path/input.txt" "c/$year/$day/input.txt"
+                fi
+              fi
+            done
           fi
         done
 
