@@ -24,11 +24,13 @@ jobs:
 
     - name: Copy inputs
       run: |
-        for year in inputs/*; do
-          if [ -d "$year" ]; then
-        for day in "$year"/*; do
-          if [ -d "$day" ]; then
-            cp "$day/input.txt" "../../c/$year/$day/input.txt"
+        for year_path in inputs/*; do
+          if [ -d "$year_path" ]; then
+          year=$(basename "$year_path")
+        for day_path in "$year_path"/*; do
+          if [ -d "$day_path" ]; then
+            day=$(basename "$day_path")
+            cp "$day_path/input.txt" "c/$year/$day/input.txt"
           fi
         done
           fi
