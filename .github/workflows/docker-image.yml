@@ -1,15 +1,21 @@
-name: Docker Image CI
+name: Build and Push Docker Image
 
 on:
   workflow_dispatch:
-
+  
 jobs:
-
-  build:
-
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker_aoc:$(date +%s)
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Build Docker image
+      run: docker build -t ghcr.io/your-username/your-image-name:latest .
+
+    - name: Push Docker image
+      run: docker push ghcr.io/your-username/your-image-name:latest
