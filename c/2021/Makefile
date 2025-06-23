@@ -2,6 +2,7 @@ CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -fsanitize=address -g
 LIBSTEST = -L /cunit/CUnit -lcunit
 OLIBSTEST = -I /cunit/CUnit
+UTILS = ../utils/parse.o ../utils/point.o
 
 ../utils/%.o: ../utils/%.c
 	@$(CC) $(CFLAGS) -c $^ -o $@
@@ -12,13 +13,13 @@ OLIBSTEST = -I /cunit/CUnit
 %/main.o: %/main.c
 	@$(CC) $(CFLAGS) -o $@ -c $^
 
-%/main: ../utils/parse.o %/main.o %/day.o
+%/main: $(UTILS) %/main.o %/day.o
 	@$(CC) $(CFLAGS) -o $@ $^
 
 %/test.o: %/test.c
 	@$(CC) $(CFLAGS) -o $@ -c $^ $(OLIBSTEST)
 
-%/test: ../utils/parse.o %/test.o %/day.o
+%/test: $(UTILS) %/test.o %/day.o
 	@$(CC) $(CFLAGS) -o $@ $^ $(LIBSTEST)
 
 .SILENT:

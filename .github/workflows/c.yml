@@ -40,4 +40,4 @@ jobs:
 
     - name: Run test
       working-directory: ./c/2021
-      run: make test01
+      run: make test
