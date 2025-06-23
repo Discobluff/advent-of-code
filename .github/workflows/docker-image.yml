@@ -15,7 +15,7 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Build Docker image
-      run: docker build -t ghcr.io/discobluff/docker_aoc:latest .
+      run: docker build -t ghcr.io/discobluff/advent_of_code:latest .
 
     - name: Push Docker image
-      run: docker push ghcr.io/discobluff/docker_aoc:latest
+      run: docker push ghcr.io/discobluff/advent_of_code:latest
