@@ -19,6 +19,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Clone inputs
+      run: git clone https://x-access-token:${{ secrets.AOC_INPUTS }}@github.com/Discobluff/advent-of-code-inputs.git inputs
+
+    - name: Copy inputs
+      run: |
+        for year in inputs/*; do
+          if [ -d "$year" ]; then
+        for day in "$year"/*; do
+          if [ -d "$day" ]; then
+            cp "$day/input.txt" "c/$year/$day/input.txt"
+          fi
+        done
+          fi
+        done
+
     - name: Run test
       working-directory: ./c/2021
       run: make test01
