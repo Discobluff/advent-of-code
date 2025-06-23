@@ -28,7 +28,7 @@ jobs:
           if [ -d "$year" ]; then
         for day in "$year"/*; do
           if [ -d "$day" ]; then
-            cp "$day/input.txt" "c/$year/$day/input.txt"
+            cp "$day/input.txt" "../../../c/$year/$day/input.txt"
           fi
         done
           fi
