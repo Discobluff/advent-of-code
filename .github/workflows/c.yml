@@ -40,4 +40,10 @@ jobs:
 
     - name: Run test
       working-directory: ./c/2021
-      run: make test
+      run: make test > tests_results.txt
+
+    - name: Archive tests results
+      uses: actions/upload-artifact@v4
+      with:
+        name: tests-results-2021
+        path: ./c/2021/tests_results.txt
