@@ -3,20 +3,20 @@
 #include <CUnit/Basic.h>
 
 void test1Input(void){
-    int res = 0;
-    CU_ASSERT_EQUAL(part1("%day/input.txt"),res);    
+    int res = 514;
+    CU_ASSERT_EQUAL(part1("09/input.txt"),res);    
 }
 
 void test2Input(void){
     int res = 0;
-    CU_ASSERT_EQUAL(part2("%day/input.txt"),res);    
+    CU_ASSERT_EQUAL(part2("09/input.txt"),res);    
 }
 
 int main(void) {    
     if (CUE_SUCCESS != CU_initialize_registry())
         return CU_get_error();
     
-    CU_pSuite suite = CU_add_suite("testsDay%day", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("testsDay09", NULL, NULL);
     if (NULL == suite) {
         CU_cleanup_registry();
         return CU_get_error();
