@@ -8,15 +8,15 @@ int main(void){
     double cpu_time_used;
 
     start = clock();
-    printf("Part1 : %d\n", part1("01/input.txt"));
+    printf("Part1 : %d\n", part1("06/input.txt"));
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("Part1 execution time: %f seconds\n", cpu_time_used);
 
     start = clock();
-    printf("Part2 : %d\n", part2("01/input.txt"));
+    printf("Part2 : %lld\n", part2("06/input.txt"));
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("Part2 execution time: %f seconds\n", cpu_time_used);    
+    printf("Part2 execution time: %f seconds\n", cpu_time_used);
     return 0;
 }

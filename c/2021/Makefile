@@ -2,7 +2,7 @@ CC = clang
 CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -fsanitize=address -g
 LIBSTEST = -L /cunit/CUnit -lcunit
 OLIBSTEST = -I /cunit/CUnit
-UTILS = ../utils/parse.o ../utils/point.o
+UTILS = ../utils/parse.o ../utils/point.o ../utils/grid_lld.o
 
 ../utils/%.o: ../utils/%.c
 	@$(CC) $(CFLAGS) -c $^ -o $@
