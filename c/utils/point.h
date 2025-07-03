@@ -1,3 +1,6 @@
+#ifndef POINT_H
+#define POINT_H
+
 #include <stdbool.h>
 
 struct _Point{
@@ -21,3 +24,6 @@ Point opposePoint(Point p);
 Point soustrPoints(Point p1, Point p2);
 bool equal(Point p1, Point p2);
 Point divScalPoint(Point p, int s);
+Point *mallocPoint(Point p);
+
+#endif

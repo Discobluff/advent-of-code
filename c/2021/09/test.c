@@ -8,7 +8,7 @@ void test1Input(void){
 }
 
 void test2Input(void){
-    int res = 0;
+    int res = 1103130;
     CU_ASSERT_EQUAL(part2("09/input.txt"),res);    
 }
 

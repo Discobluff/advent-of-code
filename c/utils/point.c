@@ -1,4 +1,5 @@
 #include "point.h"
+#include <stdlib.h>
 
 Point addPoints(Point p1, Point p2){
     Point p3;
@@ -30,5 +31,12 @@ Point divScalPoint(Point p, int s){
     Point res;
     res.x = p.x/s;
     res.y = p.y/s;
+    return res;
+}
+
+Point *mallocPoint(Point p){
+    Point *res = malloc(sizeof(Point));
+    res->x = p.x;
+    res->y = p.y;
     return res;
 }
