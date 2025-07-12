@@ -37,7 +37,7 @@ int part1(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
                 case ']':
@@ -46,7 +46,7 @@ int part1(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
                 case '}':
@@ -55,7 +55,7 @@ int part1(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;                
                 case '>':
@@ -64,12 +64,12 @@ int part1(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
             }
         }
-        freeLifo(lifo);
+        freeLifoElem(lifo);
     }
     freeLines(lines, size);
     return score;
@@ -109,7 +109,7 @@ long part2(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
                 case ']':
@@ -118,7 +118,7 @@ long part2(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
                 case '}':
@@ -127,7 +127,7 @@ long part2(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;                
                 case '>':
@@ -136,7 +136,7 @@ long part2(const char* path){
                         j = len;
                     }
                     else{
-                        popLifo(lifo);
+                        popLifoFree(lifo);
                     }
                     break;
             }
@@ -166,9 +166,11 @@ long part2(const char* path){
             scores[lenScores] = score;
             lenScores++;
         }
-        freeLifo(lifo);
+        freeLifoElem(lifo);
     }
     sortArrayLong(scores, lenScores);
     freeLines(lines, size);
-    return scores[lenScores/2];
+    long res = scores[lenScores/2];
+    free(scores);
+    return res;
 }

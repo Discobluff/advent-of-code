@@ -16,9 +16,15 @@ Set *BFS(void *start, Set *(*neighborsFunc)(void *), bool (*comp)(void *, void*)
                 addFifo(nexts, head->elem);
                 head = head->next;
             }
+            freeSet(neighbors);
             addSet(seen, current);
         }
-        nexts->head = nexts->head->next;        
+        else{
+            free(current);
+        }
+        Node *temp = nexts->head->next;
+        free(nexts->head);
+        nexts->head = temp;
     }    
     freeFifo(nexts);
     return seen;

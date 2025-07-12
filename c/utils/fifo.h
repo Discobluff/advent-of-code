@@ -23,6 +23,7 @@ void addFifo(Fifo *fifo, void *elem);
 void *getHeadFifo(Fifo *fifo);
 void *popFifo(Fifo *fifo);
 void freeFifo(Fifo *fifo);
+void freeFifoElem(Fifo *fifo);
 void printFifoPoint(Fifo *fifo);
 int lenFifo(Fifo *fifo);
 

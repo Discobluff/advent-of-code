@@ -34,10 +34,30 @@ void *popLifo(Lifo *lifo){
     return res;
 }
 
+void *popLifoFree(Lifo *lifo){
+    void *res = getHeadLifo(lifo);
+    Node *next = lifo->head->next;
+    free(lifo->head->elem);
+    free(lifo->head);
+    lifo->head = next;
+    return res;
+}
+
 void freeLifo(Lifo *lifo){
     Node *node = lifo->head;
     while (node != NULL){
         Node *next = node->next;
+        free(node);
+        node = next;
+    }
+    free(lifo);
+}
+
+void freeLifoElem(Lifo *lifo){
+    Node *node = lifo->head;
+    while (node != NULL){
+        Node *next = node->next;
+        free(node->elem);
         free(node);
         node = next;
     }

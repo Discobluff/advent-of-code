@@ -55,13 +55,11 @@ int part1(const char *path){
 Set *getNeighbors(void *point) {
     Set *neighbors = createSet();
     NodeBFS *p = (NodeBFS *)point;
-    // printf("%d %d\n",p->p.x, p->p.y);
     int size = p->size;
     char **lines = p->lines;
     Point directions[] = {NORTH_POINT, SOUTH_POINT, EAST_POINT, WEST_POINT};
     for (int i = 0; i < 4; i++) {
-        Point neighbor = addPoints(p->p, directions[i]);
-        // printf("%d %d\n",neighbor.x, neighbor.y);
+        Point neighbor = addPoints(p->p, directions[i]);        
         if (neighbor.y >= 0 && neighbor.y < size && neighbor.x >= 0 && neighbor.x < (int)strlen(lines[neighbor.y])) {
             if (EVAL_POINT(lines, neighbor) != '9') {
                 NodeBFS *neighborNode = malloc(sizeof(NodeBFS));
@@ -114,11 +112,11 @@ int part2(const char *path){
                 lowPoint = false;
             }
             if (lowPoint){
-                NodeBFS pointNode;
-                pointNode.lines = lines;
-                pointNode.size = size;
-                pointNode.p = p;
-                Set *basin = BFS(&pointNode, getNeighbors, compNodeBFS);
+                NodeBFS *pointNode = malloc(sizeof(NodeBFS));
+                pointNode->lines = lines;
+                pointNode->size = size;
+                pointNode->p = p;
+                Set *basin = BFS(pointNode, getNeighbors, compNodeBFS);
                 int *len = malloc(sizeof(int));
                 *len = lenSet(basin);                
                 if (lenSet(res) < 3){
@@ -127,13 +125,19 @@ int part2(const char *path){
                 else{
                     int min = minSetInt(res);                    
                     if (min < *len){
-                        removeSet(res, &min,compRemoveSet);
+                        removeSetFree(res, &min,compRemoveSet);
                         addSet(res, len);
                     }
-                }                
+                    else{
+                        free(len);
+                    }
+                }
+                freeSetElem(basin);
             }
         }
     }
     freeLines(lines, size);
-    return prodSet(res);
+    int result = prodSet(res);
+    freeSetElem(res);
+    return result;
 }

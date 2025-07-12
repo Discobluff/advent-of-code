@@ -72,6 +72,27 @@ void removeSet(Set *set, void * elem, bool (*comp)(void *, void*)){
     }
 }
 
+void removeSetFree(Set *set, void * elem, bool (*comp)(void *, void*)){
+    Node *head = set->head;
+    if (comp(head->elem, elem)){
+        Node *next = head->next;
+        free(head->elem);
+        free(head);
+        set->head = next;
+        return;
+    }
+    while (head->next != NULL){
+        if (comp(head->next->elem, elem)){
+            Node *next = head->next->next;
+            free(head->next->elem);
+            free(head->next);
+            head->next = next;
+            return;
+        }
+        head = head->next;
+    }
+}
+
 int lenSet(Set *set){
     Node *head = set->head;
     int len = 0;
@@ -100,4 +121,12 @@ int prodSet(Set *set){
         head = head->next;
     }
     return res;
+}
+
+void freeSetElem(Set *set){
+    freeFifoElem(set);
+}
+
+void freeSet(Set *set){
+    freeFifo(set);
 }

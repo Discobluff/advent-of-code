@@ -12,9 +12,12 @@ bool isPresentSet(Set *set, void *elem, bool (*comp)(void *, void*));
 void addSet(Set *set, void *elem);
 void *minSet(Set *set, bool (*comp)(void *, void*));
 void removeSet(Set *set, void * elem, bool (*comp)(void *, void*));
+void removeSetFree(Set *set, void * elem, bool (*comp)(void *, void*));
 int lenSet(Set *set);
 int minSetInt(Set *set);
 int sumSet(Set *set);
 int prodSet(Set *set);
+void freeSetElem(Set *set);
+void freeSet(Set *set);
 
 #endif

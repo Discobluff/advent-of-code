@@ -53,6 +53,17 @@ void freeFifo(Fifo *fifo){
     free(fifo);
 }
 
+void freeFifoElem(Fifo *fifo){
+    Node *node = fifo->head;
+    while (node != NULL){
+        Node *next = node->next;
+        free(node->elem);
+        free(node);
+        node = next;
+    }
+    free(fifo);
+}
+
 void printFifoPoint(Fifo *fifo){
     Node *head = fifo->head;
     while(head !=NULL){
