@@ -3,12 +3,12 @@
 #include <CUnit/Basic.h>
 
 void test1Input(void){
-    int res = 0;
+    int res = 5178;
     CU_ASSERT_EQUAL(part1("12/input.txt"),res);    
 }
 
 void test2Input(void){
-    int res = 0;
+    int res = 130094;
     CU_ASSERT_EQUAL(part2("12/input.txt"),res);    
 }
 

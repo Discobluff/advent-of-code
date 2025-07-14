@@ -13,17 +13,9 @@ struct _Connection{
 typedef struct _Connection Connection;
 
 Lifo *copyLifoString(Lifo *lifo){
-    Fifo *fifo = createFifo();
-    Node *head = lifo->head;
-    while (head != NULL){
-        char *oldElem = *(char**)head->elem;
-        char *newElem = malloc(sizeof(char)*(strlen(oldElem)+1));
-        strcpy(newElem, oldElem);
-        addFifo(fifo, &newElem);
-        head = head->next;
-    }
     Lifo *res = createLifo();
-    res->head = fifo->head;
+    Node *head = lifo->head;
+    res->head = head;
     return res;
 }
 
@@ -37,17 +29,11 @@ void printLifoString(Lifo *lifo){
     printf("\n");
 }
 
-int getNumberPaths(Connection *connections, int sizeConnections, Lifo *path){
+int getNumberPaths1(Connection *connections, int sizeConnections, Lifo *path){
     char *current = *(char**)getHeadLifo(path);    
     if (strcmp(current, "end") == 0){
         return 1;
     }
-    if (lenLifo(path)>3){
-        return 1;
-    }
-    // printLifoString(path);
-    printf("%d\n",lenLifo(path));
-    printf("current : %s\n",current);
     int res = 0;
     for (int i=0;i<sizeConnections;i++){
         bool b1 = (strcmp(current, connections[i].cave1) == 0);
@@ -61,8 +47,28 @@ int getNumberPaths(Connection *connections, int sizeConnections, Lifo *path){
         }
         if (b1 || b2){
             bool add = true;
-            if (nextCave[0] >= 'a' && nextCave[0] <= 'z'){
+            if (strcmp(nextCave, "start") == 0){
                 Node *head = path->head;
+                while (head != NULL){
+                    char *step = *(char**)head->elem;
+                    if (strcmp(step,"start") == 0){
+                        add = false;
+                    }
+                    head = head->next;
+                }
+            }
+            if (strcmp(nextCave, "end") == 0){
+                Node *head = path->head;
+                while (head != NULL){
+                    char *step = *(char**)head->elem;
+                    if (strcmp(step,"end") == 0){
+                        add = false;
+                    }
+                    head = head->next;
+                }
+            }
+            if (nextCave[0] >= 'a' && nextCave[0] <= 'z'){
+                Node *head = path->head;                
                 while (head != NULL){
                     char *step = *(char**)head->elem;
                     if (strcmp(step,nextCave) == 0){
@@ -71,20 +77,10 @@ int getNumberPaths(Connection *connections, int sizeConnections, Lifo *path){
                     head = head->next;
                 }
             }
-            if (add){
-                printf("next : %s\n",nextCave);
+            if (add){                
                 Lifo *nextPath = copyLifoString(path);
-                char *newCave = malloc(sizeof(char)*(strlen(nextCave)+1));
-                strcpy(newCave, nextCave);
-                // printLifoString(nextPath);
-                // printf("%s\n",newCave);
-                addLifo(nextPath, &newCave);
-                // nextPath->head->next = (Node*)malloc(sizeof(Node));
-                // nextPath->head->next->elem = newCave;
-                // printf("marge\n");
-                // printLifoString(nextPath);
-                // printLifoString(nextPath);
-                res += getNumberPaths(connections, sizeConnections, nextPath);
+                addLifo(nextPath, &nextCave);
+                res += getNumberPaths1(connections, sizeConnections, nextPath);
             }
         }
     }
@@ -104,12 +100,107 @@ int part1(const char* path){
     }
     freeLines(lines, size);
     Lifo *first = createLifo();
-    char *start = malloc(sizeof(char)*6);
-    strcpy(start, "start");
-    addLifo(first, &start);
-    return getNumberPaths(connections, size, first);
+    for (int i=0;i<size;i++){
+        if (strcmp(connections[i].cave1, "start") == 0){
+            addLifo(first, &connections[i].cave1);
+            break;
+        }
+        if (strcmp(connections[i].cave2, "start") == 0){
+            addLifo(first, &connections[i].cave2);
+            break;
+        }
+    }
+    return getNumberPaths1(connections, size, first);
+}
+
+int getNumberPaths2(Connection *connections, int sizeConnections, Lifo *path, bool smallCaveTwice){
+    char *current = *(char**)getHeadLifo(path);    
+    if (strcmp(current, "end") == 0){
+        return 1;
+    }
+    int res = 0;
+    for (int i=0;i<sizeConnections;i++){
+        bool b1 = (strcmp(current, connections[i].cave1) == 0);
+        bool b2 = (strcmp(current, connections[i].cave2) == 0);
+        char *nextCave;
+        if (b1){
+            nextCave = connections[i].cave2;
+        }
+        if (b2){
+            nextCave = connections[i].cave1;
+        }
+        if (b1 || b2){
+            bool add1 = true;
+            if (strcmp(nextCave, "start") == 0){
+                Node *head = path->head;
+                while (head != NULL){
+                    char *step = *(char**)head->elem;
+                    if (strcmp(step,"start") == 0){
+                        add1 = false;
+                    }
+                    head = head->next;
+                }
+            }
+            if (strcmp(nextCave, "end") == 0){
+                Node *head = path->head;
+                while (head != NULL){
+                    char *step = *(char**)head->elem;
+                    if (strcmp(step,"end") == 0){
+                        add1 = false;
+                    }
+                    head = head->next;
+                }
+            }
+            bool add2 = true;
+            if (nextCave[0] >= 'a' && nextCave[0] <= 'z'){
+                Node *head = path->head;                
+                while (head != NULL){
+                    char *step = *(char**)head->elem;
+                    if (strcmp(step,nextCave) == 0){
+                        add2 = false;
+                    }
+                    head = head->next;
+                }
+            }
+            if (add1){
+                if (add2){
+                    Lifo *nextPath = copyLifoString(path);
+                    addLifo(nextPath, &nextCave);
+                    res += getNumberPaths2(connections, sizeConnections, nextPath, smallCaveTwice);
+                }
+                if (!smallCaveTwice && !add2){
+                    Lifo *nextPath = copyLifoString(path);
+                    addLifo(nextPath, &nextCave);
+                    res += getNumberPaths2(connections, sizeConnections, nextPath, true);
+                }
+            }
+        }
+    }
+    return res;
 }
 
 int part2(const char* path){    
-    return 0;
+    int size;
+    char **lines = splitFile(path, '\n', &size, true);
+    Connection *connections = malloc(sizeof(Connection)*size);
+    for (int i=0;i<size;i++){
+        char *c1;
+        char *c2;
+        sscanf(lines[i], "%m[^-]-%m[^-]", &c1, &c2);
+        connections[i].cave1 = c1;
+        connections[i].cave2 = c2;
+    }
+    freeLines(lines, size);
+    Lifo *first = createLifo();
+    for (int i=0;i<size;i++){
+        if (strcmp(connections[i].cave1, "start") == 0){
+            addLifo(first, &connections[i].cave1);
+            break;
+        }
+        if (strcmp(connections[i].cave2, "start") == 0){
+            addLifo(first, &connections[i].cave2);
+            break;
+        }
+    }
+    return getNumberPaths2(connections, size, first, false);
 }
