@@ -3,13 +3,7 @@
 #define LIFO_H
 
 #include <stdbool.h>
-
-struct _Node {
-    struct _Node *next;
-    void *elem;
-};
-
-typedef struct _Node Node;
+#include "fifo.h"
 
 struct _Lifo {
     Node *head;
