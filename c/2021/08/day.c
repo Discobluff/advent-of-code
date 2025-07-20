@@ -85,8 +85,11 @@ int part2(const char* path){
                     addSet(setLetters, &letters[j][k]);
                 }
                 for (int k=0;k<len;k++){
-                    candidats[one[k]-'a'] = intersectSet(setLetters, candidats[one[k]-'a'], comp);
+                    Set *tempSet = intersectSet(setLetters, candidats[one[k]-'a'], comp);
+                    freeSet(candidats[one[k]-'a']);
+                    candidats[one[k]-'a'] = tempSet;
                 }
+                freeSet(setLetters);
             }
             if (len == (int)strlen(four)){
                 Set *setLetters  = createSet();
@@ -94,8 +97,11 @@ int part2(const char* path){
                     addSet(setLetters, &letters[j][k]);
                 }
                 for (int k=0;k<len;k++){
-                    candidats[four[k]-'a'] = intersectSet(setLetters, candidats[four[k]-'a'], comp);
+                    Set *tempSet = intersectSet(setLetters, candidats[four[k]-'a'], comp);
+                    freeSet(candidats[four[k]-'a']);
+                    candidats[four[k]-'a'] = tempSet;
                 }
+                freeSet(setLetters);
             }
             if (len == (int)strlen(seven)){
                 Set *setLetters  = createSet();
@@ -103,8 +109,11 @@ int part2(const char* path){
                     addSet(setLetters, &letters[j][k]);
                 }
                 for (int k=0;k<len;k++){
-                    candidats[seven[k]-'a'] = intersectSet(setLetters, candidats[seven[k]-'a'], comp);
+                    Set *tempSet = intersectSet(setLetters, candidats[seven[k]-'a'], comp);
+                    freeSet(candidats[seven[k]-'a']);
+                    candidats[seven[k]-'a'] = tempSet;
                 }
+                freeSet(setLetters);
             }
             if (len == (int)strlen(eight)){
                 Set *setLetters  = createSet();
@@ -112,20 +121,34 @@ int part2(const char* path){
                     addSet(setLetters, &letters[j][k]);
                 }
                 for (int k=0;k<len;k++){
-                    candidats[eight[k]-'a'] = intersectSet(setLetters, candidats[eight[k]-'a'], comp);
+                    Set *tempSet = intersectSet(setLetters, candidats[eight[k]-'a'], comp);
+                    freeSet(candidats[eight[k]-'a']);
+                    candidats[eight[k]-'a'] = tempSet;
                 }
+                freeSet(setLetters);
             }
             if (len == (int)strlen(zero)){
                 Set *setLetters = createSet();
                 for (int k=0;k<len;k++){
                     addSet(setLetters, &letters[j][k]);
                 }
-                size6Set = unionSet(size6Set, priveSet(setEight, setLetters, comp), comp);
+                Set *tempSet = priveSet(setEight, setLetters, comp);
+                Set *tempTempSet = unionSet(size6Set, tempSet, comp);
+                freeSet(size6Set);
+                size6Set = tempTempSet;
+                freeSet(tempSet);
+                freeSet(setLetters);
             }
         }
-        candidats['d'-'a'] = intersectSet(candidats['d' - 'a'], size6Set, comp);
-        candidats['e'-'a'] = intersectSet(candidats['e' - 'a'], size6Set, comp);
-        candidats['c'-'a'] = intersectSet(candidats['c' - 'a'], size6Set, comp);
+        Set *tempSet = intersectSet(candidats['d' - 'a'], size6Set, comp);
+        freeSet(candidats['d'-'a']);
+        candidats['d'-'a'] = tempSet;
+        tempSet = intersectSet(candidats['e' - 'a'], size6Set, comp);
+        freeSet(candidats['e'-'a']);
+        candidats['e'-'a'] = tempSet;
+        tempSet = intersectSet(candidats['c' - 'a'], size6Set, comp);
+        freeSet(candidats['c'-'a']);
+        candidats['c'-'a'] = tempSet;                
         bool go = true;
         while (go){
             go = false;
@@ -133,7 +156,9 @@ int part2(const char* path){
                 if (lenSet(candidats[j]) == 1){
                     for (int k=0;k<nbDigits;k++){
                         if (k != j){
-                            candidats[k] = priveSet(candidats[k], candidats[j], comp);
+                            Set *tempSet = priveSet(candidats[k], candidats[j], comp);
+                            freeSet(candidats[k]);
+                            candidats[k] = tempSet;
                         }                    
                     }
                 }
@@ -174,8 +199,16 @@ int part2(const char* path){
                     }
                 }
             }
+            freeSetElem(lettersRes);
 
         }
+
+        for (int j=0;j<nbDigits;j++){
+            freeSet(candidats[j]);
+        }
+        free(candidats);
+        freeSet(setEight);
+        freeSet(size6Set);
         freeLines(code, nbDecode);
         freeLines(letters, nbLetters);
         freeLines(line, sizeLine);
