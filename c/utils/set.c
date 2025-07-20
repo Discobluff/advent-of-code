@@ -130,3 +130,44 @@ void freeSetElem(Set *set){
 void freeSet(Set *set){
     freeFifo(set);
 }
+
+Set *intersectSet(Set *s1, Set *s2, bool (*comp)(void *, void*)){
+    Set *res = createSet();
+    Node *head = s1->head;
+    while (head != NULL){
+        if (isPresentSet(s2, head->elem, comp)){
+            addSet(res, head->elem);
+        }
+        head = head->next;
+    }
+    return res;
+}
+
+Set *unionSet(Set *s1, Set *s2, bool (*comp)(void *, void*)){
+    Set *res = createSet();
+    Node *head1 = s1->head;
+    while (head1 != NULL){
+        addSet(res, head1->elem);
+        head1 = head1->next;
+    }
+    Node *head2 = s2->head;
+    while (head2 != NULL){
+        if (!isPresentSet(res, head2->elem, comp)){
+            addSet(res, head2->elem);
+        }
+        head2 = head2->next;
+    }
+    return res;
+}
+
+Set *priveSet(Set *s1, Set *s2, bool (*comp)(void *, void*)){
+    Set *res = createSet();
+    Node *head = s1->head;
+    while (head != NULL){
+        if (!isPresentSet(s2, head->elem, comp)){
+            addSet(res, head->elem);
+        }
+        head = head->next;
+    }
+    return res;
+}

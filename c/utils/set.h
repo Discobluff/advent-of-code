@@ -19,5 +19,8 @@ int sumSet(Set *set);
 int prodSet(Set *set);
 void freeSetElem(Set *set);
 void freeSet(Set *set);
+Set *intersectSet(Set *s1, Set *s2, bool (*comp)(void *, void*));
+Set *unionSet(Set *s1, Set *s2, bool (*comp)(void *, void*));
+Set *priveSet(Set *s1, Set *s2, bool (*comp)(void *, void*));
 
 #endif
