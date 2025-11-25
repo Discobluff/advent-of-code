@@ -34,3 +34,7 @@ createDay
 
 #Inputs files
 *.txt
+
+#C files
+*.o
+main

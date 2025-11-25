@@ -1,0 +1,49 @@
+name: Tests C
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/discobluff/docker_aoc:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Clone inputs
+      run: git clone https://x-access-token:${{ secrets.AOC_INPUTS }}@github.com/Discobluff/advent-of-code-inputs.git inputs
+
+    - name: Copy inputs
+      run: |
+        for year_path in inputs/*; do
+          if [ -d "$year_path" ]; then
+            year=$(basename "$year_path")
+            for day_path in "$year_path"/*; do
+              if [ -d "$day_path" ]; then
+                day=$(basename "$day_path")
+                if [ -d "c/$year/$day" ]; then
+                  cp "$day_path/input.txt" "c/$year/$day/input.txt"
+                fi
+              fi
+            done
+          fi
+        done
+
+    - name: Run test
+      working-directory: ./c/2021
+      run: make test > tests_results.txt
+
+    - name: Archive tests results
+      uses: actions/upload-artifact@v4
+      with:
+        name: tests-results-2021
+        path: ./c/2021/tests_results.txt
