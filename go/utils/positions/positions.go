@@ -25,6 +25,10 @@ func AddPositions(pos1 Position, pos2 Position) Position {
 	return DefPosition(pos1.Line+pos2.Line, pos1.Column+pos2.Column)
 }
 
+func MultPosition(pos Position, factor int) Position {
+	return DefPosition(pos.Line*factor, pos.Column*factor)
+}
+
 func Eval(grid []string, pos Position) byte {
 	return grid[pos.Line][pos.Column]
 }
