@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 func mkDir(path string) {
@@ -71,9 +73,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	err = godotenv.Load("../.env")
+	if err != nil {
+		panic("Error loading .env file")
+	}
+	sessionValue := os.Getenv("SESSION_COOKIE")
+	if sessionValue == "" {
+		panic("SESSION_COOKIE environment variable is not set")
+	}
 	sessionCookie := &http.Cookie{
 		Name:  "session",
-		Value: "53616c7465645f5f5de2dff9d38cfef69c14f1e126965a77acdf6d4c7029c9d3cda922b41b5e988e62d15c5f9e60e7d583d3334dc859d122bd68aaeee51a2c95", // Remplacez par votre valeur de cookie de session
+		Value: sessionValue,
 	}
 	req.AddCookie(sessionCookie)
 	client := &http.Client{}
