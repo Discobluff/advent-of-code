@@ -53,6 +53,10 @@ func ParseLinesToSetSegment(lines []string, parseLine func(string) segment) set.
 	return res
 }
 
+func Size(s segment)int{
+	return s.b - s.a + 1
+}
+
 //Return if s2 c s1
 func Include(s1 segment, s2 segment)bool{
 	return s1.a <= s2.a && s2.b <= s1.b
